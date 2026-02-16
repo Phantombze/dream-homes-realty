@@ -129,9 +129,8 @@ This is a private project for Dream Homes Realty. For internal team members:
 **Dream Homes Realty**
 Belize
 
-- Website: [Your website URL]
-- Email: [Your email]
-- Phone: [Your phone]
+- Website: dreamhomes-realty.com
+- Email: info@dreamhomes-realty.com
 
 ---
 
