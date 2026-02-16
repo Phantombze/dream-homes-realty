@@ -122,7 +122,7 @@ This is a private project for Dream Homes Realty. For internal team members:
 
 ## 📝 License
 
-© 2024 Dream Homes Realty. All rights reserved.
+© 2026 Dream Homes Realty. All rights reserved.
 
 ## 📧 Contact
 
