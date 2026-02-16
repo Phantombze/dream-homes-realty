@@ -15,8 +15,10 @@ vendor/
 config.local.php
 
 # CRITICAL: Private folder contains sensitive credentials
-/private/
-private/
+/private/dh-config.php
+
+# Allow the example config to be committed (safe template)
+!/private/dh-config.example.php
 
 # Database
 *.sql
