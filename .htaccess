@@ -1,0 +1,2 @@
+SetEnv DREAMHOMES_CONFIG /home/www.dreamhomes-realty.com/private/dh-config.php
+Options -Indexes
