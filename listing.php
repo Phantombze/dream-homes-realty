@@ -5,6 +5,7 @@ require_once __DIR__ . '/includes/site-settings.php';
 $agentPhone = dh_site_setting('agent.phone', dh_site_setting('contact.phone_primary', '+501 672 8009'));
 $agentEmail = dh_site_setting('agent.email', dh_site_setting('contact.email_main', 'info@dreamhomes-realty.com'));
 $agentName = dh_site_setting('agent.name', 'Dream Homes Realty');
+$agentPhoto = dh_site_setting('agent.photo', 'https://i.pravatar.cc/150?img=11');
 
 $slug = trim($_GET['slug'] ?? '');
 $listing = null;
@@ -457,7 +458,7 @@ if ($listing) {
 
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-14 h-14 rounded-full border-2 border-brand-gold overflow-hidden">
-                                <img src="https://i.pravatar.cc/150?img=11" alt="<?php echo htmlspecialchars($agentName); ?>" class="w-full h-full object-cover">
+                                <img src="<?php echo htmlspecialchars($agentPhoto, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($agentName); ?>" class="w-full h-full object-cover">
                             </div>
                             <div>
                                 <p class="font-bold text-lg leading-none"><?php echo htmlspecialchars($agentName); ?></p>

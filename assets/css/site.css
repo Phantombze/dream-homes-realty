@@ -1747,6 +1747,12 @@ body.dh-listings-page .dh-card-stats {
     border-radius: var(--dh-radius);
     box-shadow: var(--dh-shadow);
     padding: 28px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dh-surface:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 31, 63, 0.12);
 }
 
 .dh-surface h3 {
@@ -1820,6 +1826,13 @@ body.dh-listings-page .dh-card-stats {
     border-radius: var(--dh-radius);
     background: rgba(15, 43, 70, 0.04);
     border: 1px solid rgba(15, 43, 70, 0.08);
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.dh-mini-card:hover {
+    transform: translateY(-1px);
+    background: rgba(15, 43, 70, 0.06);
+    border-color: rgba(15, 43, 70, 0.12);
 }
 
 .dh-mini-card strong {

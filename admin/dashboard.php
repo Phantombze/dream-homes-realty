@@ -195,136 +195,131 @@ require_once __DIR__ . '/includes/header.php';
         </form>
     </section>
 
-    <aside class="admin-stack">
-        <!-- Email & Security Card -->
-        <div class="admin-card">
-            <div class="admin-panel-header">
-                <div>
-                    <h2>Account & Security</h2>
-                    <div class="admin-panel-note">Email and security settings</div>
-                </div>
+    <section class="admin-card">
+        <div class="admin-panel-header">
+            <div>
+                <h2>Recent listings</h2>
+                <div class="admin-panel-note">Showing <?php echo htmlspecialchars($filterLabel, ENT_QUOTES, 'UTF-8'); ?>.</div>
             </div>
-            <div class="admin-security-section">
-                <div class="admin-security-item">
-                    <div class="admin-security-label">Email Address</div>
-                    <div class="admin-security-value"><?php echo htmlspecialchars($_SESSION['admin_email'], ENT_QUOTES, 'UTF-8'); ?></div>
-                </div>
-                <div class="admin-security-item">
-                    <div class="admin-security-label">Account Status</div>
-                    <div class="admin-security-value">
-                        <span class="admin-badge admin-badge-success">Active</span>
-                    </div>
-                </div>
-                <div class="admin-security-item">
-                    <div class="admin-security-label">Last Login</div>
-                    <div class="admin-security-value">Now</div>
-                </div>
-            </div>
-            <div class="admin-actions-row" style="margin-top: 16px;">
-                <a href="#" class="admin-btn admin-btn-secondary" style="width: 100%;">Change Password</a>
-            </div>
-        </div>
-        <div class="admin-card">
-            <div class="admin-panel-header">
-                <div>
-                    <h2>Quick filters</h2>
-                    <div class="admin-panel-note">Use these to review focus areas fast.</div>
-                </div>
-            </div>
-            <div class="admin-filter-bar">
-                <a class="admin-filter <?php echo $filter === 'all' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=all">All listings</a>
-                <a class="admin-filter <?php echo $filter === 'featured' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=featured">Featured</a>
-                <a class="admin-filter <?php echo $filter === 'standard' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=standard">Standard</a>
-                <a class="admin-filter <?php echo $filter === 'new' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=new">New (30 days)</a>
-            </div>
+            <a class="admin-link" href="/admin/listings.php">View all</a>
         </div>
 
-        <div class="admin-card">
-            <div class="admin-panel-header">
-                <div>
-                    <h2>Key metrics</h2>
-                    <div class="admin-panel-note">Live snapshot from the database.</div>
-                </div>
-            </div>
-            <div class="admin-metric-list">
-                <div class="admin-metric">
-                    <span>Total listings</span>
-                    <strong><?php echo $listingCount; ?></strong>
-                </div>
-                <div class="admin-metric">
-                    <span>Featured listings</span>
-                    <strong><?php echo $featuredCount; ?></strong>
-                </div>
-                <div class="admin-metric">
-                    <span>New in 30 days</span>
-                    <strong><?php echo $recentCount; ?></strong>
-                </div>
-                <div class="admin-metric">
-                    <span>Total categories</span>
-                    <strong><?php echo $categoryCount; ?></strong>
-                </div>
-            </div>
+        <!-- Quick Filters integrated -->
+        <div class="admin-filter-bar" style="margin-bottom: 20px;">
+            <a class="admin-filter <?php echo $filter === 'all' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=all">All listings</a>
+            <a class="admin-filter <?php echo $filter === 'featured' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=featured">Featured</a>
+            <a class="admin-filter <?php echo $filter === 'standard' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=standard">Standard</a>
+            <a class="admin-filter <?php echo $filter === 'new' ? 'is-active' : ''; ?>" href="/admin/dashboard.php?filter=new">New (30 days)</a>
         </div>
-    </aside>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Listing</th>
+                        <th>Price</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($recentListings)): ?>
+                        <tr>
+                            <td colspan="5" class="admin-muted">No listings found for this filter.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($recentListings as $listing): ?>
+                            <tr>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($listing['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
+                                    <div class="admin-muted"><?php echo htmlspecialchars($listing['location'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                </td>
+                                <td><?php echo htmlspecialchars($listing['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo date('M j, Y', strtotime($listing['created_at'])); ?></td>
+                                <td>
+                                    <span class="admin-pill <?php echo !empty($listing['featured']) ? 'on' : ''; ?>">
+                                        <?php echo !empty($listing['featured']) ? 'Featured' : 'Standard'; ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="admin-table-actions">
+                                        <a class="admin-link" href="/admin/listings.php?edit=<?php echo (int) $listing['id']; ?>">Edit</a>
+                                        <form method="post" class="admin-inline-form">
+                                            <?php echo csrf_field(); ?>
+                                            <input type="hidden" name="action" value="toggle_featured">
+                                            <input type="hidden" name="listing_id" value="<?php echo (int) $listing['id']; ?>">
+                                            <input type="hidden" name="featured" value="<?php echo !empty($listing['featured']) ? '0' : '1'; ?>">
+                                            <button type="submit" class="admin-btn secondary small">
+                                                <?php echo !empty($listing['featured']) ? 'Unfeature' : 'Feature'; ?>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
-<div class="admin-card" style="margin-top: 24px;">
-    <div class="admin-panel-header">
-        <div>
-            <h2>Recent listings</h2>
-            <div class="admin-panel-note">Showing <?php echo htmlspecialchars($filterLabel, ENT_QUOTES, 'UTF-8'); ?>.</div>
+<!-- Secondary Cards Row -->
+<div class="admin-dashboard-grid" style="margin-top: 24px;">
+    <div class="admin-card">
+        <div class="admin-panel-header">
+            <div>
+                <h2>Account & Security</h2>
+                <div class="admin-panel-note">Email and security settings</div>
+            </div>
         </div>
-        <a class="admin-link" href="/admin/listings.php">View all</a>
+        <div class="admin-security-section">
+            <div class="admin-security-item">
+                <div class="admin-security-label">Email Address</div>
+                <div class="admin-security-value"><?php echo htmlspecialchars($_SESSION['admin_email'], ENT_QUOTES, 'UTF-8'); ?></div>
+            </div>
+            <div class="admin-security-item">
+                <div class="admin-security-label">Account Status</div>
+                <div class="admin-security-value">
+                    <span class="admin-badge admin-badge-success">Active</span>
+                </div>
+            </div>
+            <div class="admin-security-item">
+                <div class="admin-security-label">Last Login</div>
+                <div class="admin-security-value">Now</div>
+            </div>
+        </div>
+        <div class="admin-actions-row" style="margin-top: 16px;">
+            <a href="#" class="admin-btn admin-btn-secondary" style="width: 100%;">Change Password</a>
+        </div>
     </div>
-    <div class="admin-table-wrap">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Listing</th>
-                    <th>Price</th>
-                    <th>Created</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($recentListings)): ?>
-                    <tr>
-                        <td colspan="5" class="admin-muted">No listings found for this filter.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($recentListings as $listing): ?>
-                        <tr>
-                            <td>
-                                <strong><?php echo htmlspecialchars($listing['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                <div class="admin-muted"><?php echo htmlspecialchars($listing['location'], ENT_QUOTES, 'UTF-8'); ?></div>
-                            </td>
-                            <td><?php echo htmlspecialchars($listing['price'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo date('M j, Y', strtotime($listing['created_at'])); ?></td>
-                            <td>
-                                <span class="admin-pill <?php echo !empty($listing['featured']) ? 'on' : ''; ?>">
-                                    <?php echo !empty($listing['featured']) ? 'Featured' : 'Standard'; ?>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="admin-table-actions">
-                                    <a class="admin-link" href="/admin/listings.php?edit=<?php echo (int) $listing['id']; ?>">Edit</a>
-                                    <form method="post" class="admin-inline-form">
-                                        <?php echo csrf_field(); ?>
-                                        <input type="hidden" name="action" value="toggle_featured">
-                                        <input type="hidden" name="listing_id" value="<?php echo (int) $listing['id']; ?>">
-                                        <input type="hidden" name="featured" value="<?php echo !empty($listing['featured']) ? '0' : '1'; ?>">
-                                        <button type="submit" class="admin-btn secondary small">
-                                            <?php echo !empty($listing['featured']) ? 'Unfeature' : 'Feature'; ?>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+
+    <div class="admin-card">
+        <div class="admin-panel-header">
+            <div>
+                <h2>Key metrics</h2>
+                <div class="admin-panel-note">Live snapshot from the database.</div>
+            </div>
+        </div>
+        <div class="admin-metric-list">
+            <div class="admin-metric">
+                <span>Total listings</span>
+                <strong><?php echo $listingCount; ?></strong>
+            </div>
+            <div class="admin-metric">
+                <span>Featured listings</span>
+                <strong><?php echo $featuredCount; ?></strong>
+            </div>
+            <div class="admin-metric">
+                <span>New in 30 days</span>
+                <strong><?php echo $recentCount; ?></strong>
+            </div>
+            <div class="admin-metric">
+                <span>Total categories</span>
+                <strong><?php echo $categoryCount; ?></strong>
+            </div>
+        </div>
     </div>
 </div>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

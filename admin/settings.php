@@ -57,11 +57,13 @@ $fields = [
 
     // About page
     'about.community_image',
+    'about.youth_image',
 
     // Agent
     'agent.name',
     'agent.phone',
     'agent.email',
+    'agent.photo',
 
     // Security - Cloudflare Turnstile
     'security.turnstile_site_key',
@@ -380,7 +382,12 @@ require_once __DIR__ . '/includes/header.php';
                     <label>Agent Email</label>
                     <input type="email" name="agent.email" value="<?php echo htmlspecialchars(s('agent.email', ''), ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
-                
+                <div class="admin-field">
+                    <label>Agent Profile Photo URL</label>
+                    <input type="url" name="agent.photo" value="<?php echo htmlspecialchars(s('agent.photo', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://...">
+                    <p class="admin-hint">Profile picture shown on listing pages. Leave blank for default avatar.</p>
+                </div>
+
                 <h4 class="admin-subsection-title">Social Media Links</h4>
                 <div class="admin-grid-2">
                     <div class="admin-field">
@@ -456,6 +463,11 @@ require_once __DIR__ . '/includes/header.php';
                     <label>Community Support Image URL</label>
                     <input type="url" name="about.community_image" value="<?php echo htmlspecialchars(s('about.community_image', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://...">
                     <p class="admin-hint">Image shown in the About page community section (Ladyville Children's Home).</p>
+                </div>
+                <div class="admin-field">
+                    <label>Youth Programs Image URL</label>
+                    <input type="url" name="about.youth_image" value="<?php echo htmlspecialchars(s('about.youth_image', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://...">
+                    <p class="admin-hint">Image shown in the About page youth empowerment section.</p>
                 </div>
             </div>
         </div>

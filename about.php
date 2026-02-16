@@ -11,6 +11,7 @@ $metaDescription = 'Learn about Dream Homes Realty and our Belize real estate te
 $canonicalUrl = $baseUrl . '/about.php';
 $ogImage = 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80';
 $communityImage = dh_site_setting('about.community_image', 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1200&q=80');
+$youthImage = dh_site_setting('about.youth_image', 'https://images.unsplash.com/photo-1526976668912-1a811878dd37?auto=format&fit=crop&q=80&w=1000');
 
 $seoGraph = [
     [
@@ -128,7 +129,7 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
 
             <div class="dh-community-row reverse dh-reveal">
                 <div class="dh-community-image">
-                    <img src="https://images.unsplash.com/photo-1526976668912-1a811878dd37?auto=format&fit=crop&q=80&w=1000" alt="Youth Programs and Opportunities">
+                    <img src="<?php echo htmlspecialchars($youthImage, ENT_QUOTES, 'UTF-8'); ?>" alt="Youth Programs and Opportunities">
                 </div>
                 <div class="dh-community-text">
                     <span class="dh-about-subtitle">Youth Empowerment</span>

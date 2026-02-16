@@ -164,7 +164,6 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
     <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
     <?php include __DIR__ . '/includes/site-header.php'; ?>
 
     <section class="dh-page-hero">
@@ -244,7 +243,7 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
                 </form>
             </div>
 
-            <div style="display:flex; flex-direction:column; gap: 18px;">
+            <div style="display:flex; flex-direction:column; gap: 18px; justify-content: flex-end; height: 100%;">
                 <div class="dh-surface">
                     <h3 style="margin-bottom: 10px;">Direct Contact</h3>
                     <div class="dh-mini-card" style="margin-bottom: 12px;">
@@ -295,12 +294,16 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
             class="dh-map-frame"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            src="https://maps.app.goo.gl/LiPtgy6RozwLYHFt8">
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4101.2908777493!2d-88.30295149999999!3d17.5506209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5c5b698a4e6855%3A0x426f577ee6f57e9!2sMedina%27s%20Material!5e1!3m2!1sen!2sbz!4v1770929476725!5m2!1sen!2sbz"
+            width="600"
+            height="450"
+            style="border:0;"
+            allowfullscreen="">
         </iframe>
     </section>
 
     <section class="dh-module-wrapper" style="padding-top: 0;">
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4101.2908777493!2d-88.30295149999999!3d17.5506209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5c5b698a4e6855%3A0x426f577ee6f57e9!2sMedina%27s%20Material!5e1!3m2!1sen!2sbz!4v1770929476725!5m2!1sen!2sbz">
+        <div class="dh-contact-section">
             <div class="dh-cta-text">
                 <span class="dh-subtitle" style="color: rgba(255,255,255,0.7); margin-bottom:10px;">Concierge Service</span>
                 <h2>Prefer to Talk?</h2>

@@ -50,19 +50,47 @@ You should see your README.md displayed with all your files!
 
 ---
 
-## Future Workflow
+## Development Workflow (Using dev Branch)
 
-After this initial push, whenever you make changes:
+### Daily Development Work:
+
+Work on the `dev` branch for all changes and testing:
 
 ```bash
+# Make sure you're on dev branch
+git checkout dev
+
 # Stage changes
 git add .
 
 # Commit with message
 git commit -m "Description of changes"
 
-# Push to GitHub
+# Push to GitHub dev branch
 git push
 ```
 
-Simple as that! 🚀
+### When Ready to Deploy to Production:
+
+After testing changes on dev, merge to main:
+
+```bash
+# Switch to main branch
+git checkout main
+
+# Merge dev into main
+git merge dev
+
+# Push main to GitHub (production)
+git push
+
+# Switch back to dev for continued work
+git checkout dev
+```
+
+### Branch Overview:
+
+- **`dev`** - Development/testing branch (your daily work goes here)
+- **`main`** - Production branch (only merge tested, stable code here)
+
+This workflow lets you safely test changes before they go live! 🚀
