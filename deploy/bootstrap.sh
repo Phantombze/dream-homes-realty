@@ -57,6 +57,9 @@ if [[ ! -d $CMS_ROOT/.git ]]; then
   # The repository was made on Windows, which records no execute bits; compare
   # content only, or every executable script would count as "changed".
   as_owner git -C "$CMS_ROOT" config core.fileMode false
+  # A few files on the server have Windows line endings (CRLF) where the
+  # repository stores LF; same content, so compare with CRs stripped.
+  as_owner git -C "$CMS_ROOT" config core.autocrlf input
   as_owner git -C "$CMS_ROOT" fetch -q "$BUNDLE" main:refs/remotes/bundle/main
   # Compare the folder as it is now with the snapshot it was taken from.
   as_owner git -C "$CMS_ROOT" read-tree "$SNAPSHOT"
