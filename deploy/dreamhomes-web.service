@@ -1,0 +1,61 @@
+[Unit]
+Description=Dream Homes Realty website (Astro, rendered per request)
+Documentation=file:///srv/src/dreamhomes/README.md
+After=network-online.target payload-cms.service
+Wants=network-online.target payload-cms.service
+
+[Service]
+Type=simple
+User=dreamhomes
+Group=dreamhomes
+WorkingDirectory=/srv/src/dreamhomes/web
+
+# PAYLOAD_API_URL, PAYLOAD_TENANT, REVALIDATE_SECRET, PUBLIC_SITE_URL.
+# 0640 root:dreamhomes, so `systemctl cat` never prints the secret.
+EnvironmentFile=/etc/dreamhomes/web.env
+Environment=HOST=127.0.0.1
+Environment=PORT=4330
+Environment=NODE_ENV=production
+Environment=NODE_OPTIONS=--max-old-space-size=160
+
+ExecStart=/usr/bin/node /srv/src/dreamhomes/web/dist/server/entry.mjs
+
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+# The box has ~2 GB shared with MongoDB and Payload. The site needs ~80 MB;
+# this ceiling keeps a runaway render from taking the CMS down with it.
+MemoryMax=220M
+MemoryHigh=180M
+CPUQuota=80%
+TasksMax=64
+
+# Same sandbox as payload-cms: reachable from the internet through Caddy,
+# needs to write nothing at all.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dreamhomes-web
+
+[Install]
+WantedBy=multi-user.target

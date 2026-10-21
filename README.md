@@ -43,6 +43,29 @@ local CMS, run the CMS (see the CMS repository's README) and set `PAYLOAD_API_UR
 Images uploaded in Payload are served at `/media/<file>` by a small proxy (the CMS host is not public), with
 year-long immutable caching so Cloudflare serves them after the first view.
 
+## Deploying
+
+On the server the site runs as `dreamhomes-web.service` (Node on `127.0.0.1:4330`, 220 MB cap) behind Caddy, which
+also serves `/_astro/*` straight from disk and routes `/api/contact` to the shared contact service. Everything is in
+`deploy/`:
+
+| | |
+|---|---|
+| `deploy/install.sh` | One-time install / re-run to update. Backs up the CMS database, adds the revalidate secret to the CMS, rebuilds the CMS, seeds Dream Homes (missing items only), builds and starts the site, swaps Caddy from the holding page (rolls back if Caddy rejects it). |
+| `deploy/dreamhomes-web.service` | systemd unit, sandboxed like `payload-cms`. |
+| `deploy/dreamhomes.caddy` | The Caddy block that replaces the holding page. |
+
+```bash
+# on the server, once the code is in /srv/src/dreamhomes and the CMS repo is updated
+sudo bash /srv/src/dreamhomes/deploy/install.sh
+```
+
+Updating the site's code later: `git pull` in `/srv/src/dreamhomes`, then `cd web && npm ci && npm run build &&
+sudo systemctl restart dreamhomes-web`. Content edits need nothing: they are live on save.
+
+Editors: create a user in the CMS (role **User**, tenant **Dream Homes Realty**, role **Tenant editor**). They see only
+the Dream Homes sections; Medina's are hidden from them.
+
 ## Old URLs
 
 `/index.php`, `/listings.php?category=N`, `/listing.php?slug=X`, `/about.php`, `/contact.php` and `/sitemap.php`
