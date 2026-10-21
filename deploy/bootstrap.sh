@@ -50,9 +50,10 @@ say "CMS code → $CMS_ROOT"
 # ---------------------------------------------------------------------------
 [[ -f $BUNDLE ]] || die "no $BUNDLE — copy medinasmaterial.bundle up with scp first"
 chmod 644 "$BUNDLE"
-as_owner git bundle verify -q "$BUNDLE" >/dev/null || die "$BUNDLE is damaged — copy it again"
 
+FIRST=0
 if [[ ! -d $CMS_ROOT/.git ]]; then
+  FIRST=1
   as_owner git -C "$CMS_ROOT" init -q -b main
   # The repository was made on Windows, which records no execute bits; compare
   # content only, or every executable script would count as "changed".
@@ -60,7 +61,12 @@ if [[ ! -d $CMS_ROOT/.git ]]; then
   # A few files on the server have Windows line endings (CRLF) where the
   # repository stores LF; same content, so compare with CRs stripped.
   as_owner git -C "$CMS_ROOT" config core.autocrlf input
-  as_owner git -C "$CMS_ROOT" fetch -q "$BUNDLE" main:refs/remotes/bundle/main
+fi
+# `git bundle verify` needs a repository to run in, hence after the init.
+as_owner git -C "$CMS_ROOT" bundle verify -q "$BUNDLE" >/dev/null 2>&1 || die "$BUNDLE is damaged — copy it again"
+as_owner git -C "$CMS_ROOT" fetch -q "$BUNDLE" main:refs/remotes/bundle/main
+
+if (( FIRST )); then
   # Compare the folder as it is now with the snapshot it was taken from.
   as_owner git -C "$CMS_ROOT" read-tree "$SNAPSHOT"
   if ! as_owner git -C "$CMS_ROOT" diff --quiet; then
@@ -70,7 +76,6 @@ if [[ ! -d $CMS_ROOT/.git ]]; then
   fi
   ok "folder matches the snapshot — safe to update"
 else
-  as_owner git -C "$CMS_ROOT" fetch -q "$BUNDLE" main:refs/remotes/bundle/main
   as_owner git -C "$CMS_ROOT" diff --quiet HEAD || die "uncommitted changes in $CMS_ROOT — see: git -C $CMS_ROOT status"
 fi
 # Untracked and ignored files — node_modules, .next, uploaded media, the
