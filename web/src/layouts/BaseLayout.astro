@@ -58,8 +58,12 @@ const organization = {
     <meta name="theme-color" content="#0a1f33" />
     <link rel="preload" href={playfairUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={montserratUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- ?v=2: while the holding page was up, /favicon.ico answered with HTML,
+         and browsers and Cloudflare may still hold that; a new URL bypasses it. -->
+    <link rel="icon" href="/favicon.ico?v=2" sizes="32x32" />
+    <link rel="icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={settings.companyName} />
