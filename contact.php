@@ -4,6 +4,10 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 require_once __DIR__ . '/includes/site-settings.php';
+require_once __DIR__ . '/includes/mailer.php';
+
+$turnstileEnabled = dh_site_setting('security.turnstile_enabled', '') === '1';
+$turnstileSiteKey  = dh_site_setting('security.turnstile_site_key', '');
 
 if (empty($_SESSION['public_csrf_token'])) {
     $_SESSION['public_csrf_token'] = bin2hex(random_bytes(32));
@@ -61,15 +65,38 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $formValues['topic'] = 'General';
     }
 
+    if ($turnstileEnabled) {
+        $tsToken = trim((string)($_POST['cf-turnstile-response'] ?? ''));
+        if ($tsToken === '') {
+            $errors[] = 'Please complete the security check.';
+        } else {
+            $tsVerify = @file_get_contents(
+                'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                false,
+                stream_context_create(['http' => [
+                    'method'  => 'POST',
+                    'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                    'content' => http_build_query([
+                        'secret'   => TURNSTILE_SECRET_KEY,
+                        'response' => $tsToken,
+                        'remoteip' => (string)($_SERVER['REMOTE_ADDR'] ?? ''),
+                    ]),
+                ]])
+            );
+            $tsData = $tsVerify ? json_decode($tsVerify, true) : null;
+            if (!$tsData || empty($tsData['success'])) {
+                $errors[] = 'Security check failed. Please try again.';
+            }
+        }
+    }
+
     if (!$errors) {
         $toEmail = dh_site_setting('contact.form_to_email', '') ?: dh_site_setting('contact.email_main', 'info@dreamhomes-realty.com');
         $topic = $formValues['topic'];
-        $siteHost = (string)($_SERVER['HTTP_HOST'] ?? 'dreamhomes-realty.com');
-        $fromEmail = 'no-reply@' . preg_replace('/^www\./i', '', $siteHost);
 
         $subject = 'Website Contact: ' . $topic;
         $bodyLines = [
-            'New website contact submission',
+            'Dream Homes Realty Contact Form Submission',
             '',
             'Name: ' . $formValues['full_name'],
             'Email: ' . $formValues['email'],
@@ -83,12 +110,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         ];
         $body = implode("\n", $bodyLines);
 
-        $headers = [];
-        $headers[] = 'From: Dream Homes Realty <' . $fromEmail . '>';
-        $headers[] = 'Reply-To: ' . $formValues['full_name'] . ' <' . $formValues['email'] . '>';
-        $headers[] = 'Content-Type: text/plain; charset=UTF-8';
-
-        $sent = @mail($toEmail, $subject, $body, implode("\r\n", $headers));
+        $sent = dh_brevo_send(
+            $toEmail,
+            'Dream Homes Realty',
+            $subject,
+            $body,
+            $formValues['email'],
+            $formValues['full_name']
+        );
         if ($sent) {
             $successMessage = 'Thanks — your message has been sent. We’ll get back to you soon.';
             $formValues['message'] = '';
@@ -162,6 +191,9 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/site.css">
+    <?php if ($turnstileEnabled && $turnstileSiteKey !== ''): ?>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <?php endif; ?>
 </head>
 <body>
     <?php include __DIR__ . '/includes/site-header.php'; ?>
@@ -238,6 +270,10 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
                         <label class="dh-label" for="message">Message</label>
                         <textarea class="dh-textarea" id="message" name="message" rows="6" required><?php echo htmlspecialchars($formValues['message'], ENT_QUOTES, 'UTF-8'); ?></textarea>
                     </div>
+
+                    <?php if ($turnstileEnabled && $turnstileSiteKey !== ''): ?>
+                    <div class="cf-turnstile" data-sitekey="<?php echo htmlspecialchars($turnstileSiteKey, ENT_QUOTES, 'UTF-8'); ?>"></div>
+                    <?php endif; ?>
 
                     <button class="dh-btn-primary" type="submit">Send Message</button>
                 </form>

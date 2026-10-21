@@ -1,7 +1,41 @@
 <?php
 define('DREAMHOMES_CONFIG', true);
-require_once __DIR__ . '/../../../private/dh-config.php';
-require_once __DIR__ . '/../../includes/site-settings.php';
+
+// Load logger first for error tracking
+if (file_exists(__DIR__ . '/../../includes/logger.php')) {
+    require_once __DIR__ . '/../../includes/logger.php';
+}
+
+// Load global error handler to catch all errors
+if (file_exists(__DIR__ . '/../../includes/error-handler.php')) {
+    require_once __DIR__ . '/../../includes/error-handler.php';
+}
+
+// Log bootstrap start
+if (function_exists('dh_log_debug')) {
+    dh_log_debug('Bootstrap initiated', [
+        'script' => $_SERVER['SCRIPT_NAME'] ?? 'unknown',
+        'request_uri' => $_SERVER['REQUEST_URI'] ?? 'unknown'
+    ]);
+}
+
+try {
+    require_once __DIR__ . '/../../../private/dh-config.php';
+} catch (Throwable $e) {
+    if (function_exists('dh_log_exception')) {
+        dh_log_exception($e, 'Failed to load dh-config.php');
+    }
+    throw $e;
+}
+
+try {
+    require_once __DIR__ . '/../../includes/site-settings.php';
+} catch (Throwable $e) {
+    if (function_exists('dh_log_exception')) {
+        dh_log_exception($e, 'Failed to load site-settings.php');
+    }
+    throw $e;
+}
 
 $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
 $autoloadCandidates = [
@@ -20,7 +54,16 @@ foreach ($autoloadCandidates as $autoload) {
 }
 
 if (!$autoloadFound) {
-    error_log('WARNING: No autoload.php found. Checked: ' . json_encode($autoloadCandidates));
+    $errorMsg = 'WARNING: No autoload.php found. Checked: ' . json_encode($autoloadCandidates);
+    error_log($errorMsg);
+
+    if (function_exists('dh_log_error')) {
+        dh_log_error('Composer autoload not found', [
+            'checked_paths' => $autoloadCandidates,
+            'document_root' => $docRoot,
+            'current_dir' => __DIR__
+        ]);
+    }
 }
 
 $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')

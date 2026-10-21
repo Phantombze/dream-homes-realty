@@ -69,8 +69,8 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
             <div class="dh-listings-hero-meta">
                 <div class="dh-listings-count" id="dhListingsCount">0 Listings</div>
                 <div class="dh-listings-tags">
-                    <span class="dh-tag">Updated Daily</span>
-                    <span class="dh-tag is-muted">Belize</span>
+                    <span class="dh-tag">Trusted Service</span>
+                    <span class="dh-tag is-muted">Belize Best</span>
                 </div>
             </div>
         </div>

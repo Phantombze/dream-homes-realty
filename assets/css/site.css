@@ -367,7 +367,7 @@ video {
     position: relative;
     padding: clamp(100px, 12vw, 140px) clamp(16px, 4vw, 50px) clamp(50px, 8vw, 70px);
     padding-left: clamp(60px, 10vw, 180px);
-    background: linear-gradient(135deg, rgba(15, 43, 70, 0.95) 0%, rgba(15, 43, 70, 0.7) 60%, rgba(197, 160, 89, 0.35) 100%);
+    background: linear-gradient(135deg, rgba(15, 43, 70, 0.95) 0%, rgba(15, 43, 70, 0.85) 100%);
     color: var(--dh-white);
 }
 
@@ -2908,6 +2908,8 @@ body.dh-listings-page .dh-card-stats {
     height: 50px;
     border-radius: 50%;
     border: 2px solid var(--dh-gold);
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .dh-quote-details h4 {

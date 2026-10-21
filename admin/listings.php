@@ -88,6 +88,16 @@ $message = '';
 $messageType = 'success';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // When PHP's post_max_size is exceeded it silently drops $_POST and $_FILES,
+    // causing the CSRF check to fail with a confusing error.
+    // Detect this early and show a clear message instead.
+    $contentLength = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+    if ($contentLength > 0 && empty($_POST)) {
+        $message = 'Upload failed: the total file size exceeds the server limit. Please upload fewer or smaller images at once.';
+        $messageType = 'error';
+        goto post_end;
+    }
+
     require_csrf();
     $action = $_POST['action'] ?? '';
 
@@ -295,6 +305,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    post_end:
 }
 
 if (isset($_GET['edit'])) {

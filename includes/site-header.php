@@ -40,7 +40,7 @@ function nav_active(string $path, string $currentPath): string {
         <a class="<?php echo nav_active('/index.php', $currentPath); ?>" href="/index.php">Home</a>
         <a class="<?php echo nav_active('/listings.php', $currentPath); ?>" href="/listings.php">Listings</a>
         <a class="<?php echo nav_active('/about.php', $currentPath); ?>" href="/about.php">About Us</a>
-        <a class="<?php echo nav_active('/contact.php', $currentPath); ?>" href="/contact.php">Contact Us</a>
+        <a class="<?php echo nav_active('/contact.php', $currentPath); ?>" href="/contact.php">Contact</a>
     </div>
     <button class="dh-nav-toggle" type="button" aria-expanded="false" aria-controls="dhNavLinks" aria-label="Toggle menu">
         <span class="dh-burger">

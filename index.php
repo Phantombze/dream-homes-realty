@@ -129,15 +129,15 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
                 <div class="dh-hero-bg" style="background-image: url('<?php echo dh_esc($heroImage3); ?>');"></div>
                 <div class="dh-hero-content">
                     <span class="dh-hero-tag">Investment Opportunity</span>
-                    <h1>Secure Your <br><span style="color:var(--dh-gold)">Legacy Today.</span></h1>
-                    <p>Belize is one of the fastest-growing markets in the region. Let our experts guide your next high-yield investment.</p>
+                    <h1>Secure Your <br><span style="color:var(--dh-gold)">Future Today.</span></h1>
+                    <p>Belize is one of the fastest-growing markets in the region. Don't wait and contact us today.</p>
                 </div>
             </div>
         </div>
 
         <div class="dh-hero-search">
             <form class="dh-search-wrap" action="#">
-                <input class="dh-search-input" type="text" placeholder="Search by neighborhood, city, zip, or keyword...">
+                <input class="dh-search-input" type="text" placeholder="Search by city, district, or keyword...">
                 <button type="submit" class="dh-search-btn">Search</button>
             </form>
         </div>
@@ -183,14 +183,14 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
         <div class="dh-lifestyle-section">
             <div class="dh-lifestyle-overlay"></div>
             <div class="dh-lifestyle-content">
-                <div class="dh-subtitle" style="margin-bottom:20px;">Client Stories</div>
-                <div class="dh-quote">"They didn't just find us a house; they found us the exact sunset view we had been dreaming of for ten years."</div>
+                <div class="dh-subtitle" style="margin-bottom:20px;">Why buy from us?</div>
+                <div class="dh-quote">"Every property we sell is personally owned, carefully selected, and priced with long-term value in mind."</div>
 
                 <div class="dh-quote-author">
-                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="dh-quote-avatar" alt="Elena" loading="lazy" width="50" height="50">
+                    <img src="https://dreamhomes-realty.com/uploads/media/Dean_PFP.jpg" class="dh-quote-avatar" alt="Dream Homes Agent" loading="lazy" width="50" height="50">
                     <div class="dh-quote-details">
-                        <h4>Elena & Marcus</h4>
-                        <span>Relocated to Ambergris Caye</span>
+                        <h4>Dean Sosa</h4>
+                        <span>Dream Homes Realty Agent</span>
                     </div>
                 </div>
             </div>
@@ -200,7 +200,7 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
             <div class="dh-cta-text">
                 <span class="dh-subtitle" style="color: rgba(255,255,255,0.7); margin-bottom:10px;">Concierge Service</span>
                 <h2>Selling or Buying?</h2>
-                <p>Experience the gold standard in Belize real estate. Get a private valuation or speak to our agents about off-market opportunities.</p>
+                <p>Experience the gold standard in Belize real estate.</p>
             </div>
             <div class="dh-cta-buttons">
                 <?php if ($homeTelHref !== ''): ?>

@@ -40,7 +40,7 @@ $fields = [
 
     // Social
     'social.facebook_url',
-    'social.youtube_url',
+    'social.instagram_url',
 
     // Homepage socials
     'home.social_1_name',
@@ -69,15 +69,9 @@ $fields = [
     'security.turnstile_site_key',
     'security.turnstile_enabled',
 
-    // Email delivery (future)
-    'email.driver',
-    'smtp.host',
-    'smtp.port',
-    'smtp.username',
-    'smtp.password',
-    'smtp.encryption',
-    'smtp.from_email',
-    'smtp.from_name',
+    // Brevo email delivery
+    'brevo.from_email',
+    'brevo.from_name',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -392,11 +386,11 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="admin-grid-2">
                     <div class="admin-field">
                         <label>Facebook URL</label>
-                        <input type="url" name="social.facebook_url" value="<?php echo htmlspecialchars(s('social.facebook_url', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://facebook.com/...">
+                        <input type="url" name="social.facebook_url" value="<?php echo htmlspecialchars(s('social.facebook_url', 'https://www.facebook.com/dreamhomesrealty.bze'), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://facebook.com/...">
                     </div>
                     <div class="admin-field">
-                        <label>YouTube URL</label>
-                        <input type="url" name="social.youtube_url" value="<?php echo htmlspecialchars(s('social.youtube_url', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://youtube.com/...">
+                        <label>Instagram URL</label>
+                        <input type="url" name="social.instagram_url" value="<?php echo htmlspecialchars(s('social.instagram_url', 'https://www.instagram.com/dreamhomesrealty_bz/'), ENT_QUOTES, 'UTF-8'); ?>" placeholder="https://instagram.com/...">
                     </div>
                 </div>
             </div>
@@ -497,7 +491,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                 </div>
                 <div class="admin-info-box">
-                    Secret key is stored in <code>private/dh-config.php</code> for security.
+                    Secret key is stored in backend for security.
                 </div>
             </div>
         </div>
@@ -509,57 +503,22 @@ require_once __DIR__ . '/includes/header.php';
                     <svg viewBox="0 0 24 24" class="admin-card-icon"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
                     Email Delivery
                 </h2>
-                <span class="admin-badge admin-badge-muted">Coming Soon</span>
+                <span class="admin-badge admin-badge-success">Brevo</span>
             </div>
             <div class="admin-card-body">
                 <div class="admin-grid-2">
                     <div class="admin-field">
-                        <label>Driver</label>
-                        <select name="email.driver">
-                            <?php $driver = s('email.driver', 'php_mail'); ?>
-                            <option value="php_mail" <?php echo $driver === 'php_mail' ? 'selected' : ''; ?>>PHP mail()</option>
-                            <option value="smtp" <?php echo $driver === 'smtp' ? 'selected' : ''; ?>>SMTP</option>
-                        </select>
-                    </div>
-                    <div class="admin-field">
-                        <label>Encryption</label>
-                        <?php $enc = s('smtp.encryption', 'tls'); ?>
-                        <select name="smtp.encryption">
-                            <option value="none" <?php echo $enc === 'none' ? 'selected' : ''; ?>>None</option>
-                            <option value="tls" <?php echo $enc === 'tls' ? 'selected' : ''; ?>>TLS</option>
-                            <option value="ssl" <?php echo $enc === 'ssl' ? 'selected' : ''; ?>>SSL</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="admin-grid-2">
-                    <div class="admin-field">
-                        <label>SMTP Host</label>
-                        <input type="text" name="smtp.host" value="<?php echo htmlspecialchars(s('smtp.host', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="smtp.example.com">
-                    </div>
-                    <div class="admin-field">
-                        <label>SMTP Port</label>
-                        <input type="text" name="smtp.port" value="<?php echo htmlspecialchars(s('smtp.port', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="587">
-                    </div>
-                </div>
-                <div class="admin-grid-2">
-                    <div class="admin-field">
-                        <label>Username</label>
-                        <input type="text" name="smtp.username" value="<?php echo htmlspecialchars(s('smtp.username', ''), ENT_QUOTES, 'UTF-8'); ?>">
-                    </div>
-                    <div class="admin-field">
-                        <label>Password</label>
-                        <input type="password" name="smtp.password" value="<?php echo htmlspecialchars(s('smtp.password', ''), ENT_QUOTES, 'UTF-8'); ?>">
-                    </div>
-                </div>
-                <div class="admin-grid-2">
-                    <div class="admin-field">
                         <label>From Email</label>
-                        <input type="email" name="smtp.from_email" value="<?php echo htmlspecialchars(s('smtp.from_email', ''), ENT_QUOTES, 'UTF-8'); ?>">
+                        <input type="email" name="brevo.from_email" value="<?php echo htmlspecialchars(s('brevo.from_email', ''), ENT_QUOTES, 'UTF-8'); ?>" placeholder="info@dreamhomes-realty.com">
+                        <p class="admin-hint">Must match a verified sender in your Brevo account.</p>
                     </div>
                     <div class="admin-field">
                         <label>From Name</label>
-                        <input type="text" name="smtp.from_name" value="<?php echo htmlspecialchars(s('smtp.from_name', ''), ENT_QUOTES, 'UTF-8'); ?>">
+                        <input type="text" name="brevo.from_name" value="<?php echo htmlspecialchars(s('brevo.from_name', 'Dream Homes Realty'), ENT_QUOTES, 'UTF-8'); ?>" placeholder="Dream Homes Realty">
                     </div>
+                </div>
+                <div class="admin-info-box">
+                    Contact form replies go to the <strong>Contact Form Recipient</strong> email set above.
                 </div>
             </div>
         </div>

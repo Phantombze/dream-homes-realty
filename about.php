@@ -90,7 +90,7 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
                         </svg>
                     </div>
                     <h3>Our Goals</h3>
-                    <p>Straight answers, realistic timelines, and a structured process from start to finish. Clear communication at every stage of your journey.</p>
+                    <p>To provide opportunities for buyers to own their own private homes in Belize and start a new life in paradise.</p>
                 </div>
 
                 <div class="dh-about-card dh-reveal">
@@ -133,8 +133,9 @@ $seoJson = json_encode(['@context' => 'https://schema.org', '@graph' => $seoGrap
                 </div>
                 <div class="dh-community-text">
                     <span class="dh-about-subtitle">Youth Empowerment</span>
-                    <h3>Supporting Programs & Opportunities</h3>
-                    <p>Support for programs and opportunities that invest in Belize's next generation. We actively support local initiatives that strengthen families and neighborhoods.</p>
+                    <h3>Sports Programs & Opportunities</h3>
+                    <p>Children's sport tournaments for U11 and U13 teams promoting youths in sports and helping them develop team skills and confidence.</p>
+                    <p>Along with summer camps for children to engage in sport activities, we are committed to supporting the next generation of Belizeans with opportunities for growth and success.</p> 
                 </div>
             </div>
         </div>

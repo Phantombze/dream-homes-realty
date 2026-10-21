@@ -52,7 +52,7 @@ $clerkSignInUrl = clerk_hosted_sign_in_url() . '?redirect_url=' . rawurlencode($
     </div>
     <script
         id="clerk-js"
-        src="https://clerk.panelbz.cloud/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+        src="<?php echo htmlspecialchars(rtrim(CLERK_ISSUER, '/'), ENT_QUOTES, 'UTF-8'); ?>/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
         data-clerk-publishable-key="<?php echo htmlspecialchars(CLERK_PUBLISHABLE_KEY, ENT_QUOTES, 'UTF-8'); ?>">
     </script>
     <script>

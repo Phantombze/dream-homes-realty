@@ -114,34 +114,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception($errorMessages[$file['error']] ?? 'Unknown upload error.');
             }
             
-            $allowedTypes = [
-                'image/png', 
-                'image/jpeg', 
-                'image/jpg', 
-                'image/gif', 
-                'image/svg+xml',
-                'image/webp'
-            ];
-            $maxSize = 5 * 1024 * 1024; // 5MB
-            
+            // Security: File size limit set to 20MB
+            $maxSize = 20 * 1024 * 1024; // 20MB
+
             // Check file size explicitly
             if ($file['size'] > $maxSize) {
                 $sizeMB = round($file['size'] / 1024 / 1024, 2);
-                throw new Exception('File is too large (' . $sizeMB . 'MB). Maximum size is 5MB.');
+                throw new Exception('File is too large (' . $sizeMB . 'MB). Maximum size is 20MB.');
             }
-            
-            if (!in_array($file['type'], $allowedTypes)) {
-                throw new Exception('Invalid file type. Please upload PNG, JPG, GIF, SVG, or WebP.');
+
+            // Security: Allowed MIME types (SVG removed due to XSS risks)
+            $allowedMimeTypes = [
+                'image/png',
+                'image/jpeg',
+                'image/gif',
+                'image/webp'
+            ];
+
+            // Security: Allowed file extensions
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+
+            // Security: Validate actual MIME type using fileinfo (can't be spoofed)
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $actualMimeType = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+
+            if (!in_array($actualMimeType, $allowedMimeTypes)) {
+                throw new Exception('Invalid file type detected. Only PNG, JPG, GIF, and WebP images are allowed.');
+            }
+
+            // Security: Additional validation - verify it's actually an image
+            $imageInfo = @getimagesize($file['tmp_name']);
+            if ($imageInfo === false) {
+                throw new Exception('File is not a valid image.');
+            }
+
+            // Security: Verify the image type matches allowed types
+            $allowedImageTypes = [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP];
+            if (!in_array($imageInfo[2], $allowedImageTypes)) {
+                throw new Exception('Unsupported image format.');
             }
             
             // Generate safe filename
             $originalName = $file['name'];
             $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+
+            // Security: Validate file extension matches allowed list
+            if (!in_array($extension, $allowedExtensions)) {
+                throw new Exception('Invalid file extension. Only .png, .jpg, .jpeg, .gif, and .webp files are allowed.');
+            }
+
             $baseName = pathinfo($originalName, PATHINFO_FILENAME);
             $safeName = preg_replace('/[^a-z0-9_-]/i', '_', $baseName);
             $safeName = preg_replace('/_+/', '_', $safeName);
             $safeName = trim($safeName, '_');
-            
+
             if ($safeName === '') {
                 $safeName = 'image_' . time();
             }
@@ -233,8 +260,8 @@ require_once __DIR__ . '/includes/header.php';
         <legend>Upload New Image to <?php echo htmlspecialchars($directories[$selectedDir]['label'], ENT_QUOTES, 'UTF-8'); ?></legend>
         <div>
             <label>Choose Image File</label>
-            <input type="file" name="media_file" accept="image/png,image/jpeg,image/jpg,image/gif,image/svg+xml,image/webp" required>
-            <div class="admin-hint">Accepts PNG, JPG, GIF, SVG, WebP. Maximum 5MB.</div>
+            <input type="file" name="media_file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" required>
+            <div class="admin-hint">Accepts PNG, JPG, GIF, WebP. Maximum 20MB.</div>
         </div>
         <div class="admin-actions-row">
             <button type="submit" class="admin-btn">Upload Image</button>

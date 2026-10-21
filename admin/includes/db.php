@@ -1,6 +1,6 @@
 <?php
 if (!defined('DREAMHOMES_CONFIG')) {
-    require_once __DIR__ . '/../../private/dh-config.php';
+    require_once __DIR__ . '/../../../private/dh-config.php';
 }
 
 function db(): PDO {

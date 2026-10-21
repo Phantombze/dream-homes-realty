@@ -85,6 +85,15 @@ $current = basename($_SERVER['PHP_SELF']);
                 </span>
                 <span class="admin-nav-label">Settings</span>
             </a>
+            <a href="/admin/view-logs.php" class="<?php echo $current === 'view-logs.php' ? 'is-active' : ''; ?>">
+                <span class="admin-nav-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6M10 13h4M10 17h4M8 13h.01M8 17h.01" />
+                    </svg>
+                </span>
+                <span class="admin-nav-label">System Logs</span>
+            </a>
             <a href="/admin/logout.php">
                 <span class="admin-nav-icon">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
