@@ -106,7 +106,7 @@ const summaries = {
   'new-vista-home-for-sale': 'Newly built three-bedroom, two-bathroom home in Vista Del Mar, Ladyville.',
 }
 
-const listings = legacy.listings.map((l, i) => {
+const listings = legacy.listings.map((l) => {
   const rent = /month/i.test(l.price)
   const price = Number(String(l.price).replace(/[^\d.]/g, ''))
   const stats = parseStats(JSON.parse(l.stats_json || '[]'))
@@ -143,8 +143,7 @@ const listings = legacy.listings.map((l, i) => {
     videoUrl: l.video_url || '',
     mapLocation: coords,
     agent: 'dean-sosa',
-    order: 100 - i,
-    publishedAt: null,
+    createdAt: new Date(`${l.created_at.replace(' ', 'T')}-06:00`).toISOString(),
   }
 })
 

@@ -29,9 +29,9 @@
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 16px;
-  --shadow-sm: 0 2px 8px rgba(15, 43, 70, 0.06);
-  --shadow: 0 15px 40px rgba(15, 43, 70, 0.08);
-  --shadow-lg: 0 25px 50px rgba(15, 43, 70, 0.18);
+  --shadow-sm: 0 1px 3px rgba(15, 43, 70, 0.06);
+  --shadow: 0 4px 14px rgba(15, 43, 70, 0.06);
+  --shadow-lg: 0 8px 22px rgba(15, 43, 70, 0.09);
 
   --ease: cubic-bezier(0.25, 1, 0.33, 1);
   --t: 0.5s var(--ease);
@@ -194,13 +194,12 @@ button {
   flex: none;
 }
 .btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .btn-gold {
   background: var(--gold);
   color: var(--white);
-  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
 }
 .btn-gold:hover {
   background: var(--gold-dark);

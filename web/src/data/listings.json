@@ -83,8 +83,7 @@
     "videoUrl": "",
     "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
     "agent": "dean-sosa",
-    "order": 100,
-    "publishedAt": null
+    "createdAt": "2026-02-18T22:04:17.000Z"
   },
   {
     "legacyId": 2,
@@ -150,8 +149,7 @@
     "videoUrl": "",
     "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
     "agent": "dean-sosa",
-    "order": 99,
-    "publishedAt": null
+    "createdAt": "2026-03-10T16:37:17.000Z"
   },
   {
     "legacyId": 3,
@@ -206,8 +204,7 @@
     "videoUrl": "",
     "mapLocation": "17°33'26.1\"N 88°18'48.2\"W",
     "agent": "dean-sosa",
-    "order": 98,
-    "publishedAt": null
+    "createdAt": "2026-03-10T19:48:15.000Z"
   },
   {
     "legacyId": 4,
@@ -254,8 +251,7 @@
     "videoUrl": "",
     "mapLocation": "18.22272, -88.54784",
     "agent": "dean-sosa",
-    "order": 97,
-    "publishedAt": null
+    "createdAt": "2026-03-10T20:24:02.000Z"
   },
   {
     "legacyId": 5,
@@ -321,8 +317,7 @@
     "videoUrl": "",
     "mapLocation": "17°33'16.6\"N 88°17'13.2\"W",
     "agent": "dean-sosa",
-    "order": 96,
-    "publishedAt": null
+    "createdAt": "2026-03-10T20:33:32.000Z"
   },
   {
     "legacyId": 6,
@@ -367,7 +362,6 @@
     "videoUrl": "",
     "mapLocation": "17°33'16.5\"N 88°17'13.7\"W",
     "agent": "dean-sosa",
-    "order": 95,
-    "publishedAt": null
+    "createdAt": "2026-03-10T20:37:13.000Z"
   }
 ]

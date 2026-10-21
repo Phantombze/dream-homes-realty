@@ -85,8 +85,7 @@ const thumbs = l.gallery.slice(1, 4)
     background: var(--surface);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(15, 43, 70, 0.05);
+    border: 1px solid var(--line);
   }
   .spot--reverse .spot__media {
     order: 2;
@@ -134,7 +133,6 @@ const thumbs = l.gallery.slice(1, 4)
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    box-shadow: 0 6px 16px rgba(197, 160, 89, 0.35);
   }
   .spot__flag svg {
     width: 13px;
@@ -189,13 +187,12 @@ const thumbs = l.gallery.slice(1, 4)
   }
   .spot__price {
     margin-top: 18px;
-    font-family: var(--serif);
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
     color: var(--gold-dark);
   }
   .spot__price small {
-    font-family: var(--sans);
     font-size: 0.9rem;
     color: var(--muted);
     margin-left: 6px;
@@ -226,8 +223,7 @@ const thumbs = l.gallery.slice(1, 4)
     margin-bottom: 4px;
   }
   .spot__facts strong {
-    font-family: var(--serif);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--navy);
     line-height: 1;
   }

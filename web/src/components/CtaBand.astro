@@ -62,16 +62,6 @@ const buttons = [resolve(primary), resolve(secondary)].filter((b) => b && b.url)
     color: var(--white);
     isolation: isolate;
   }
-  .cta::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(197, 160, 89, 0.22) 0%, transparent 70%);
-    z-index: -1;
-  }
   .cta__text {
     flex: 1;
     min-width: min(300px, 100%);

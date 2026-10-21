@@ -63,19 +63,7 @@ const mail = agent.email ? `mailto:${agent.email}?subject=${encodeURIComponent(`
     border-radius: var(--radius-lg);
     background: var(--navy);
     color: var(--white);
-    box-shadow: var(--shadow-lg);
     isolation: isolate;
-  }
-  .agent::before {
-    content: '';
-    position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(197, 160, 89, 0.25), transparent 70%);
-    z-index: -1;
   }
   .eyebrow {
     color: var(--gold);

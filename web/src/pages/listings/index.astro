@@ -122,6 +122,8 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
         }
       </div>
 
+      <nav class="pager" aria-label="Pages" data-pager hidden></nav>
+
       <div class="empty" data-empty hidden>
         <Icon name="lucide:search-x" />
         <p>{page.emptyText}</p>
@@ -166,8 +168,8 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     color: rgba(255, 255, 255, 0.8);
   }
   .stats strong {
-    font-family: var(--serif);
-    font-size: 1.15rem;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--gold);
     letter-spacing: 0;
   }
@@ -180,7 +182,6 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
-    box-shadow: 0 8px 24px rgba(15, 43, 70, 0.06);
   }
   .filters__inner {
     display: flex;
@@ -393,6 +394,9 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     margin-bottom: 32px;
     border-bottom: 1px solid var(--line);
   }
+  #all-heading {
+    scroll-margin-top: 160px;
+  }
   .results-count {
     color: var(--muted);
     font-size: 0.9rem;
@@ -419,6 +423,49 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
       grid-template-columns: 1fr;
     }
   }
+  .pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 48px;
+  }
+  .pager[hidden] {
+    display: none;
+  }
+  .pager :global(button) {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--navy);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      color 0.25s,
+      border-color 0.25s;
+  }
+  .pager :global(button:hover:not(:disabled)) {
+    border-color: var(--navy);
+  }
+  .pager :global(button[aria-current='page']) {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .pager :global(button:disabled) {
+    opacity: 0.4;
+    cursor: default;
+  }
   .empty {
     display: grid;
     justify-items: center;
@@ -444,9 +491,12 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
 </style>
 
 <script>
+  const PAGE_SIZE = 9
+
   const root = document.querySelector<HTMLElement>('.listings')!
   const items = [...document.querySelectorAll<HTMLElement>('[data-item]')]
   const grid = document.querySelector<HTMLElement>('[data-grid]')!
+  const pager = document.querySelector<HTMLElement>('[data-pager]')!
   const empty = document.querySelector<HTMLElement>('[data-empty]')!
   const count = document.querySelector<HTMLElement>('[data-count]')!
   const countWord = document.querySelector<HTMLElement>('[data-count-word]')!
@@ -461,23 +511,11 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     category: params.get('category') ?? '',
     deal: params.get('deal') ?? '',
     sort: params.get('sort') ?? 'newest',
+    page: Math.max(1, Number(params.get('page')) || 1),
   }
 
   function apply() {
     const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean)
-    let shown = 0
-    for (const item of items) {
-      const card = item.firstElementChild as HTMLElement
-      const ok =
-        (!state.category || card.dataset.category === state.category) &&
-        (!state.deal || card.dataset.deal === state.deal) &&
-        terms.every((t) => (card.dataset.search ?? '').includes(t))
-      item.hidden = !ok
-      if (ok) {
-        shown++
-        item.classList.add('is-revealed')
-      }
-    }
 
     const sorted = [...items].sort((a, b) => {
       if (state.sort === 'price-asc') return Number(a.dataset.price) - Number(b.dataset.price)
@@ -486,10 +524,28 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     })
     sorted.forEach((el) => grid.appendChild(el))
 
-    count.textContent = String(shown)
-    countWord.textContent = shown === 1 ? 'property' : 'properties'
-    empty.hidden = shown > 0
-    root.classList.toggle('is-filtering', Boolean(state.q || state.category || state.deal))
+    const matches = sorted.filter((item) => {
+      const card = item.firstElementChild as HTMLElement
+      return (
+        (!state.category || card.dataset.category === state.category) &&
+        (!state.deal || card.dataset.deal === state.deal) &&
+        terms.every((t) => (card.dataset.search ?? '').includes(t))
+      )
+    })
+
+    const pages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE))
+    state.page = Math.min(state.page, pages)
+    const onPage = new Set(matches.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE))
+    for (const item of items) {
+      item.hidden = !onPage.has(item)
+      if (onPage.has(item)) item.classList.add('is-revealed')
+    }
+
+    count.textContent = String(matches.length)
+    countWord.textContent = matches.length === 1 ? 'property' : 'properties'
+    empty.hidden = matches.length > 0
+    renderPager(pages)
+    root.classList.toggle('is-filtering', Boolean(state.q || state.category || state.deal || state.page > 1))
     catBtns.forEach((b) => b.classList.toggle('is-on', b.dataset.filterCategory === state.category))
     dealBtns.forEach((b) => b.classList.toggle('is-on', b.dataset.filterDeal === state.deal))
 
@@ -498,34 +554,66 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     if (state.category) next.set('category', state.category)
     if (state.deal) next.set('deal', state.deal)
     if (state.sort !== 'newest') next.set('sort', state.sort)
+    if (state.page > 1) next.set('page', String(state.page))
     const qs = next.toString()
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname)
   }
 
+  function renderPager(pages: number) {
+    pager.hidden = pages < 2
+    pager.replaceChildren()
+    if (pages < 2) return
+    const button = (label: string, page: number, opts: { current?: boolean; disabled?: boolean; aria?: string } = {}) => {
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.textContent = label
+      if (opts.aria) b.setAttribute('aria-label', opts.aria)
+      if (opts.current) b.setAttribute('aria-current', 'page')
+      b.disabled = Boolean(opts.disabled)
+      b.addEventListener('click', () => goTo(page))
+      pager.append(b)
+    }
+    button('‹ Prev', state.page - 1, { disabled: state.page === 1, aria: 'Previous page' })
+    for (let p = 1; p <= pages; p++) button(String(p), p, { current: p === state.page, aria: `Page ${p}` })
+    button('Next ›', state.page + 1, { disabled: state.page === pages, aria: 'Next page' })
+  }
+
+  function goTo(page: number) {
+    state.page = page
+    apply()
+    document.getElementById('all-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  /** Any change to the filters starts again from page 1. */
+  const refilter = () => {
+    state.page = 1
+    apply()
+  }
+
   q.addEventListener('input', () => {
     state.q = q.value.trim()
-    apply()
+    refilter()
   })
   sortSel.addEventListener('change', () => {
     state.sort = sortSel.value
-    apply()
+    refilter()
   })
   catBtns.forEach((b) =>
     b.addEventListener('click', () => {
       state.category = b.dataset.filterCategory ?? ''
-      apply()
+      refilter()
     }),
   )
   dealBtns.forEach((b) =>
     b.addEventListener('click', () => {
       state.deal = b.dataset.filterDeal ?? ''
-      apply()
+      refilter()
     }),
   )
   document.querySelector('[data-reset]')?.addEventListener('click', () => {
     Object.assign(state, { q: '', category: '', deal: '' })
     q.value = ''
-    apply()
+    refilter()
   })
 
   apply()

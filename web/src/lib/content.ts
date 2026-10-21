@@ -208,7 +208,7 @@ export function toListing(doc: any, lookups: { categories: Category[]; locations
     badge: doc.badge?.text ? { text: doc.badge.text, style: doc.badge.style === 'navy' ? 'navy' : 'gold' } : null,
     featured: Boolean(doc.featured),
     summary: doc.summary ?? '',
-    descriptionHtml: doc.description_html ?? '',
+    descriptionHtml: doc.descriptionHtml ?? '',
     facts,
     highlights,
     amenities,
@@ -221,7 +221,7 @@ export function toListing(doc: any, lookups: { categories: Category[]; locations
       .filter(Boolean)
       .join(' ')
       .toLowerCase(),
-    order: doc.order ?? 0,
+    order: Date.parse(doc.createdAt ?? '') || 0,
     updatedAt: doc.updatedAt ?? null,
   }
 }

@@ -1,4 +1,9 @@
 ---
+/**
+ * Site footer, laid out as on the original site: the two-line wordmark and
+ * gold social buttons, then the link columns and contacts in even columns
+ * across the page. The link columns come from Site Settings → Footer.
+ */
 import { Icon } from 'astro-icon/components'
 import { telHref, whatsappHref } from '../lib/content'
 import { SOCIAL_ICONS, type Settings } from '../lib/site'
@@ -9,15 +14,20 @@ interface Props {
 
 const { settings } = Astro.props
 const wa = whatsappHref(settings.whatsapp)
-const socials = [...settings.socials, ...(wa ? [{ platform: 'whatsapp', url: wa }] : [])]
-const [first, ...rest] = settings.companyName.split(' ')
+// Same order as the old footer: Facebook, WhatsApp, then the rest.
+const socials = [
+  ...settings.socials.filter((s) => s.platform === 'facebook'),
+  ...(wa ? [{ platform: 'whatsapp', url: wa }] : []),
+  ...settings.socials.filter((s) => s.platform !== 'facebook'),
+]
+const [first, second, ...rest] = settings.companyName.split(' ')
 const year = new Date().getFullYear()
 ---
 
 <footer class="footer">
   <div class="container footer__grid">
     <div class="footer__brand">
-      <a href="/" class="footer__logo">{first} <span>{rest.join(' ')}</span></a>
+      <a href="/" class="footer__logo">{first} {second}<br /><span>{rest.join(' ')}</span></a>
       <p>{settings.tagline}</p>
       <div class="footer__socials">
         {
@@ -35,7 +45,7 @@ const year = new Date().getFullYear()
 
     {
       settings.footerColumns.map((col) => (
-        <div>
+        <nav aria-label={col.title}>
           <h3 class="footer__heading">{col.title}</h3>
           <ul class="footer__links">
             {col.links.map((l) => (
@@ -44,12 +54,12 @@ const year = new Date().getFullYear()
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
       ))
     }
 
     <div>
-      <h3 class="footer__heading">Contact</h3>
+      <h3 class="footer__heading">Contacts</h3>
       <ul class="footer__contact">
         {
           settings.phones.length > 0 && (
@@ -83,9 +93,12 @@ const year = new Date().getFullYear()
     </div>
   </div>
 
-  <div class="container footer__bar">
+  <div class="footer__bar">
     <span>&copy; {year} {settings.copyright}</span>
-    <a href="/sitemap.xml">Sitemap</a>
+    <div class="footer__bar-links">
+      <a href="/sitemap.xml">Sitemap</a>
+      <span>Designed by Ruan</span>
+    </div>
   </div>
 </footer>
 
@@ -94,7 +107,7 @@ const year = new Date().getFullYear()
     position: relative;
     background: var(--navy);
     color: var(--white);
-    padding-top: clamp(56px, 8vw, 80px);
+    padding-top: clamp(64px, 8vw, 88px);
   }
   .footer::before {
     content: '';
@@ -103,28 +116,31 @@ const year = new Date().getFullYear()
     height: 4px;
     background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 50%, var(--navy) 100%);
   }
+
   .footer__grid {
     display: grid;
-    grid-template-columns: 1.3fr repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 48px;
-    padding-bottom: 56px;
+    padding-bottom: clamp(48px, 6vw, 64px);
   }
+
   .footer__logo {
     display: inline-block;
     font-family: var(--serif);
-    font-size: 1.8rem;
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1.2;
     color: var(--white);
     text-decoration: none;
-    margin-bottom: 18px;
   }
   .footer__logo span {
     color: var(--gold);
   }
   .footer__brand p {
+    margin: 22px 0 26px;
+    max-width: 320px;
     color: #b0b8c1;
     font-size: 0.92rem;
-    max-width: 320px;
-    margin-bottom: 24px;
   }
   .footer__socials {
     display: flex;
@@ -133,36 +149,34 @@ const year = new Date().getFullYear()
   .footer__socials a {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     display: grid;
     place-items: center;
+    border-radius: 50%;
     background: var(--gold);
     color: var(--navy);
-    transition:
-      transform 0.3s,
-      background 0.3s;
+    transition: background 0.3s;
   }
   .footer__socials a:hover {
-    transform: translateY(-3px);
     background: var(--white);
   }
   .footer__socials svg {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
   }
+
   .footer__heading {
     font-family: var(--serif);
     font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 24px;
+    font-weight: 700;
+    margin-bottom: 26px;
   }
   .footer__heading::after {
     content: '';
     display: block;
     width: 30px;
     height: 2px;
-    background: var(--gold);
     margin-top: 10px;
+    background: var(--gold);
   }
   .footer__links,
   .footer__contact {
@@ -173,6 +187,8 @@ const year = new Date().getFullYear()
     gap: 12px;
   }
   .footer__links a {
+    display: inline-block;
+    padding-left: 20px;
     color: #b0b8c1;
     text-decoration: none;
     font-size: 0.92rem;
@@ -182,11 +198,11 @@ const year = new Date().getFullYear()
   }
   .footer__links a:hover {
     color: var(--gold);
-    padding-left: 5px;
+    padding-left: 25px;
   }
   .footer__contact li {
     display: flex;
-    gap: 14px;
+    gap: 15px;
     color: #b0b8c1;
     font-size: 0.92rem;
   }
@@ -195,12 +211,12 @@ const year = new Date().getFullYear()
     height: 18px;
     color: var(--gold);
     flex: none;
-    margin-top: 3px;
+    margin-top: 2px;
   }
   .footer__contact a {
+    display: block;
     color: inherit;
     text-decoration: none;
-    display: block;
   }
   .footer__contact a:hover {
     color: var(--gold);
@@ -208,16 +224,22 @@ const year = new Date().getFullYear()
   .footer__address {
     white-space: pre-line;
   }
+
+  /* The bottom bar runs the full width, as on the old site. */
   .footer__bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding: 24px var(--gutter);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .footer__bar-links {
+    display: flex;
+    gap: 20px;
   }
   .footer__bar a {
     color: inherit;
@@ -226,17 +248,16 @@ const year = new Date().getFullYear()
   .footer__bar a:hover {
     color: var(--gold);
   }
-  @media (max-width: 900px) {
+
+  @media (max-width: 1024px) {
     .footer__grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .footer__brand {
-      grid-column: 1 / -1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (max-width: 520px) {
+  @media (max-width: 560px) {
     .footer__grid {
       grid-template-columns: 1fr;
+      gap: 40px;
     }
   }
 </style>

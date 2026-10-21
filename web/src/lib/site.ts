@@ -56,9 +56,9 @@ export async function getTaxonomy(): Promise<{ categories: Category[]; locations
   }
 }
 
-/** Every published listing, newest-first by the editor's order. */
+/** Every published listing, newest first. */
 export async function getListings(): Promise<Listing[]> {
-  const [docs, taxonomy] = await Promise.all([getCollection('listings', { sort: '-order' }), getTaxonomy()])
+  const [docs, taxonomy] = await Promise.all([getCollection('listings', { sort: '-createdAt' }), getTaxonomy()])
   return docs.map((d) => toListing(d, taxonomy))
 }
 

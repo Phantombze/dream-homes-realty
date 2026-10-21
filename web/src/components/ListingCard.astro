@@ -101,8 +101,8 @@ const unavailable = l.status !== 'available'
       box-shadow var(--t);
   }
   .card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
   }
 
   .card__media {
@@ -236,14 +236,13 @@ const unavailable = l.status !== 'available'
     padding: 20px 22px 22px;
   }
   .card__price {
-    font-family: var(--serif);
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
     color: var(--navy);
     line-height: 1.2;
   }
   .card__price small {
-    font-family: var(--sans);
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--muted);
