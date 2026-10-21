@@ -51,14 +51,34 @@ also serves `/_astro/*` straight from disk and routes `/api/contact` to the shar
 
 | | |
 |---|---|
-| `deploy/install.sh` | One-time install / re-run to update. Backs up the CMS database, adds the revalidate secret to the CMS, rebuilds the CMS, seeds Dream Homes (missing items only), builds and starts the site, swaps Caddy from the holding page (rolls back if Caddy rejects it). |
+| `deploy/bootstrap.sh` | First deploy: puts this repo in `/srv/src/dreamhomes` (from GitHub) and the CMS repo in `/srv/src/medinasmaterial` (from a git bundle copied up with scp, so no GitHub credentials live on the server), then runs `install.sh`. Stops if the CMS folder changed on the server since it was snapshotted. |
+| `deploy/install.sh` | Install / re-run to update. Backs up the CMS database, adds the revalidate secret to the CMS, rebuilds the CMS, seeds Dream Homes (missing items only), builds and starts the site, installs the contact service, swaps Caddy from the holding page (rolls back if Caddy rejects it). |
+| `deploy/set-contact-keys.sh` | Asks for the Brevo API key and Turnstile keys (hidden input) and stores them root-only. |
 | `deploy/dreamhomes-web.service` | systemd unit, sandboxed like `payload-cms`. |
 | `deploy/dreamhomes.caddy` | The Caddy block that replaces the holding page. |
 
-```bash
-# on the server, once the code is in /srv/src/dreamhomes and the CMS repo is updated
-sudo bash /srv/src/dreamhomes/deploy/install.sh
+First deploy, from the laptop (PowerShell), in the CMS repository folder:
+
+```powershell
+git bundle create medinasmaterial.bundle main
+scp -i "$env:USERPROFILE\.ssh\medma@MedMat-private" medinasmaterial.bundle medmat@159.65.237.47:/tmp/
 ```
+
+then on the server:
+
+```bash
+curl -fsSLo /tmp/bootstrap.sh https://raw.githubusercontent.com/Phantombze/dream-homes-realty/main/deploy/bootstrap.sh
+sudo bash /tmp/bootstrap.sh
+sudo bash /srv/src/dreamhomes/deploy/set-contact-keys.sh
+```
+
+### Contact form keys
+
+Kept on the server only, never in git or the CMS (every CMS login and database backup would otherwise carry them):
+`/etc/site-contact/contact.env` (root, 600) holds the Brevo API key and Turnstile secret; `/srv/deploy/turnstile.env`
+holds the public Turnstile site key. `set-contact-keys.sh` writes both and restarts what reads them. Enquiries go to
+the inboxes listed for `dreamhomes` in `/opt/site-contact/sites.json`; Brevo must have dreamhomes-realty.com
+verified as a sending domain.
 
 Updating the site's code later: `git pull` in `/srv/src/dreamhomes`, then `cd web && npm ci && npm run build &&
 sudo systemctl restart dreamhomes-web`. Content edits need nothing: they are live on save.

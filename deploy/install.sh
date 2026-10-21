@@ -115,9 +115,7 @@ cd "$WEB"
   echo "PAYLOAD_API_URL=http://127.0.0.1:3100"
   echo "PAYLOAD_TENANT=dreamhomes"
   echo "PUBLIC_SITE_URL=$SITE_URL"
-  [[ -f /srv/deploy/turnstile.env ]] && grep '^PUBLIC_TURNSTILE_SITE_KEY=' /srv/deploy/turnstile.env || true
 } > .env
-grep -q PUBLIC_TURNSTILE_SITE_KEY .env || warn "no Turnstile site key yet — the contact form shows without the check until contact-forms is installed"
 npm ci --include=dev --no-audit --no-fund 2>&1 | tail -2
 npm run build 2>&1 | tail -4 || die "site build failed — nothing changed on the live site"
 chown -R medmat:dreamhomes "$SITE"; chmod -R g+rX "$SITE"
@@ -139,7 +137,36 @@ resp=$(curl -fsS -X POST -H "x-revalidate-secret: $SECRET" http://127.0.0.1:4330
 [[ $resp == *'"ok":true'* ]] && ok "CMS → site revalidation works" || warn "revalidate check failed: $resp"
 
 # ---------------------------------------------------------------------------
-say "7. Point Caddy at it (replaces the holding page)"
+say "7. Contact form service (Brevo + Turnstile)"
+# ---------------------------------------------------------------------------
+# Only the shared service is installed here. The full kit in
+# ops/contact-forms/install.sh also changes Medina's and Parking Solutions'
+# forms and rebuilds those sites; run that separately when they are ready.
+KIT=/srv/src/medinasmaterial/ops/contact-forms/site-contact
+[[ -f $KIT/contact-server.mjs ]] || die "no contact service at $KIT — update the CMS repository"
+install -d -m 755 /opt/site-contact
+install -m 644 "$KIT/contact-core.mjs" "$KIT/contact-server.mjs" /opt/site-contact/
+if [[ ! -f /opt/site-contact/sites.json ]]; then
+  install -m 644 "$KIT/sites.json" /opt/site-contact/
+elif ! grep -q '"dreamhomes"' /opt/site-contact/sites.json; then
+  warn "/opt/site-contact/sites.json exists without Dream Homes — add the dreamhomes entry from $KIT/sites.json"
+fi
+(cd "$KIT" && node test.mjs 2>/dev/null | tail -1)
+install -d -m 700 /etc/site-contact
+[[ -f /etc/site-contact/contact.env ]] || install -m 600 /dev/null /etc/site-contact/contact.env
+install -m 644 "$KIT/site-contact.service" /etc/systemd/system/site-contact.service
+systemctl daemon-reload
+systemctl enable --now site-contact >/dev/null 2>&1
+systemctl restart site-contact
+sleep 1
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:8787/api/contact || true)
+[[ $code == 403 ]] && ok "contact service running, refuses unknown sites" || warn "contact service answered $code (expected 403)"
+grep -q '^BREVO_API_KEY=xkeysib-' /etc/site-contact/contact.env \
+  && ok "contact keys present" \
+  || warn "contact keys not set yet: sudo bash $SITE/deploy/set-contact-keys.sh"
+
+# ---------------------------------------------------------------------------
+say "8. Point Caddy at it (replaces the holding page)"
 # ---------------------------------------------------------------------------
 if grep -q 'reverse_proxy 127.0.0.1:4330' "$CADDYFILE"; then
   ok "Caddy already routes the site"
@@ -173,7 +200,6 @@ cat <<'EOF'
    Edit:    https://cp.panelbz.cloud/admin  → Dream Homes
 
    Still to do once (see README → Deploying):
+   - contact form keys:  sudo bash /srv/src/dreamhomes/deploy/set-contact-keys.sh
    - create Dean's editor account in the CMS, tenant "Dream Homes Realty"
-   - install the contact-form service (Server MCP/contact-forms) so the form sends
-   - turn maintenance mode off:  sudo mcpctl maintenance off
 EOF
