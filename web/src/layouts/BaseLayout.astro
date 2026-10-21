@@ -22,7 +22,8 @@ const { title, description, active, overHero = false, image, noindex = false, sc
 const settings = await getSettings()
 
 const site = (Astro.site?.href ?? 'https://www.dreamhomes-realty.com').replace(/\/$/, '')
-const canonical = new URL(Astro.url.pathname, site).href
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`
+const canonical = new URL(path, site).href
 const fullTitle = !title ? settings.seo.title || settings.companyName : title.includes(settings.companyName) ? title : `${title} | ${settings.companyName}`
 const metaDescription = description || settings.seo.description
 const share = image ?? settings.seo.image

@@ -13,7 +13,17 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
 
-  trailingSlash: 'always',
+  // Pages are linked with a trailing slash (/about/) and their canonical URL
+  // always has one (BaseLayout), but 'always' would also demand it of files
+  // such as /media/photo.webp and /sitemap.xml, so slashes are not enforced.
+  trailingSlash: 'ignore',
+
+  // Astro rejects POSTs whose Origin is not this site. The only POST endpoint
+  // here is /api/revalidate/, called server-to-server by the CMS (no Origin
+  // header) and guarded by a shared secret instead. The contact form posts to
+  // the separate contact service, not to this app. Re-enable if a browser-
+  // facing POST route is ever added.
+  security: { checkOrigin: false },
 
   integrations: [
     icon({
