@@ -1,0 +1,95 @@
+---
+import type { Agent, Image } from '../lib/content'
+
+interface Props {
+  eyebrow: string
+  text: string
+  agent: Agent | null
+  background: Image | null
+}
+
+const { eyebrow, text, agent, background } = Astro.props
+---
+
+<section class="quote" data-reveal>
+  {background && <img class="quote__bg" src={background.src} srcset={background.srcset} sizes="100vw" alt="" loading="lazy" decoding="async" />}
+  <div class="quote__content">
+    <span class="eyebrow">{eyebrow}</span>
+    <blockquote>“{text}”</blockquote>
+    {
+      agent && (
+        <div class="quote__author">
+          {agent.photo && <img src={agent.photo.src} alt="" width="56" height="56" loading="lazy" />}
+          <div>
+            <strong>{agent.name}</strong>
+            <span>{agent.role}</span>
+          </div>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .quote {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    padding: clamp(48px, 7vw, 90px) clamp(24px, 5vw, 64px);
+    color: var(--white);
+    background: var(--navy);
+    isolation: isolate;
+  }
+  .quote__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .quote::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to right, rgba(15, 43, 70, 0.95), rgba(15, 43, 70, 0.6));
+  }
+  .quote__content {
+    max-width: 640px;
+  }
+  .quote .eyebrow {
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  blockquote {
+    margin: 0 0 30px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.4;
+  }
+  .quote__author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .quote__author img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    object-fit: cover;
+    object-position: top;
+  }
+  .quote__author strong {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+  }
+  .quote__author span {
+    font-size: 0.8rem;
+    opacity: 0.75;
+  }
+</style>

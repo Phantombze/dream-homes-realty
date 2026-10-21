@@ -1,0 +1,57 @@
+---
+import { Icon } from 'astro-icon/components'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import ListingCard from '../components/ListingCard.astro'
+import { getListings } from '../lib/site'
+
+Astro.response.status = 404
+const latest = (await getListings()).filter((l) => l.status === 'available').slice(0, 3)
+---
+
+<BaseLayout title="Page not found" noindex>
+  <div class="container nf">
+    <span class="eyebrow">Error 404</span>
+    <h1 class="heading">This page has moved or no longer exists</h1>
+    <p class="lede">The property may have been sold, or the link may be out of date. Here are some that are available now.</p>
+    <div class="nf__actions">
+      <a class="btn btn-navy" href="/listings/"><Icon name="lucide:search" /> Browse all listings</a>
+      <a class="btn btn-outline" href="/">Back to home</a>
+    </div>
+    {
+      latest.length > 0 && (
+        <div class="nf__grid">
+          {latest.map((l) => (
+            <ListingCard listing={l} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-top: calc(70px + clamp(48px, 8vw, 96px));
+    padding-bottom: var(--section-y);
+  }
+  .nf .heading {
+    margin: 12px 0 16px;
+    max-width: 20ch;
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 28px 0 56px;
+  }
+  .nf__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+  @media (max-width: 900px) {
+    .nf__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,2 +1,0 @@
-# Block all direct web access — files here are PHP includes only
-Deny from all

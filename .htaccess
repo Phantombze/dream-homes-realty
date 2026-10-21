@@ -1,8 +1,0 @@
-SetEnv DREAMHOMES_CONFIG /home/www.dreamhomes-realty.com/private/dh-config.php
-Options -Indexes
-
-<IfModule mod_php.c>
-    php_value upload_max_filesize 20M
-    php_value post_max_size 60M
-    php_value max_file_uploads 20
-</IfModule>

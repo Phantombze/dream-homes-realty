@@ -1,0 +1,51 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<button class="to-top" type="button" aria-label="Back to top" data-to-top>
+  <Icon name="lucide:chevron-up" />
+</button>
+
+<style>
+  .to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 40;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--gold);
+    color: var(--white);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition:
+      opacity 0.3s,
+      transform 0.3s,
+      background 0.3s;
+  }
+  .to-top.is-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .to-top:hover {
+    background: var(--navy);
+  }
+  .to-top svg {
+    width: 22px;
+    height: 22px;
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-to-top]')!
+  window.addEventListener('scroll', () => btn.classList.toggle('is-visible', window.scrollY > 500), { passive: true })
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
+</script>

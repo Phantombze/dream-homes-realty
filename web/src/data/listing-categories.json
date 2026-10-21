@@ -1,0 +1,35 @@
+[
+  {
+    "legacyId": 1,
+    "name": "Land",
+    "slug": "land",
+    "description": "Lots and acreage across Belize, from highway frontage to quiet country land.",
+    "image": {
+      "src": "/images/seed/category-land.webp",
+      "alt": "Land for sale in Belize"
+    },
+    "order": 1
+  },
+  {
+    "legacyId": 2,
+    "name": "Apartments",
+    "slug": "apartments",
+    "description": "Ready-to-move-in rentals with utilities included.",
+    "image": {
+      "src": "/images/seed/category-apartments.webp",
+      "alt": "Apartments for sale in Belize"
+    },
+    "order": 2
+  },
+  {
+    "legacyId": 3,
+    "name": "Homes",
+    "slug": "homes",
+    "description": "Newly built family homes in established neighbourhoods.",
+    "image": {
+      "src": "/images/seed/category-homes.webp",
+      "alt": "Homes for sale in Belize"
+    },
+    "order": 3
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "hero": {
+    "eyebrow": "Welcome to Dream Homes",
+    "title": "Who We Are",
+    "text": "Dream Homes Realty helps clients find, buy, sell, and rent quality properties throughout Belize with a process that is clear, practical, and fully supported."
+  },
+  "pillars": [
+    {
+      "icon": "target",
+      "title": "Our Mission",
+      "text": "From lots to move-in-ready homes, we help clients identify the best-fit property with integrity, local expertise, and personalized guidance."
+    },
+    {
+      "icon": "flag",
+      "title": "Our Goals",
+      "text": "To provide opportunities for buyers to own their own private homes in Belize and start a new life in paradise."
+    },
+    {
+      "icon": "heart",
+      "title": "Our Values",
+      "text": "We help buyers and investors evaluate options with both present needs and future goals in mind. Smart decisions for long-term value."
+    }
+  ],
+  "community": {
+    "eyebrow": "Beyond Real Estate",
+    "title": "Our Heart for the Community",
+    "rows": [
+      {
+        "eyebrow": "Giving Back",
+        "title": "Supporting the Ladyville Children's Home",
+        "text": "Our work is not only about property. We are committed to giving back, including ongoing support for the Ladyville Children's Home and community-centered initiatives.\n\nBy choosing Dream Homes Realty, clients partner with a team that believes business success should create positive social impact in Belize.",
+        "image": {
+          "src": "/images/seed/about-community.webp",
+          "alt": "Dream Homes Realty supporting the Ladyville Children's Home"
+        }
+      },
+      {
+        "eyebrow": "Youth Empowerment",
+        "title": "Sports Programs & Opportunities",
+        "text": "Children's sport tournaments for U11 and U13 teams promoting youths in sports and helping them develop team skills and confidence.\n\nAlong with summer camps for children to engage in sport activities, we are committed to supporting the next generation of Belizeans with opportunities for growth and success.",
+        "image": {
+          "src": "/images/seed/about-youth.webp",
+          "alt": "Youth sports programme supported by Dream Homes Realty"
+        }
+      }
+    ]
+  },
+  "services": {
+    "eyebrow": "What We Do",
+    "title": "Services and Community Commitment",
+    "items": [
+      {
+        "icon": "home",
+        "label": "Property Sales"
+      },
+      {
+        "icon": "key",
+        "label": "Home Rentals"
+      },
+      {
+        "icon": "heart",
+        "label": "Community Support"
+      },
+      {
+        "icon": "trophy",
+        "label": "Youth Engagement"
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Next Steps",
+    "title": "Let’s Find the Right Property in Belize",
+    "text": "Browse available listings or speak with our team for personalized guidance.",
+    "primary": {
+      "label": "View Listings",
+      "action": "link",
+      "href": "/listings/"
+    },
+    "secondary": {
+      "label": "Contact Us",
+      "action": "link",
+      "href": "/contact/"
+    }
+  },
+  "seo": {
+    "title": "About Us",
+    "description": "Dream Homes Realty helps clients buy, sell and rent property across Belize, and gives back to the Ladyville community."
+  }
+}

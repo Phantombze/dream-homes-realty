@@ -1,0 +1,98 @@
+---
+import '../styles/global.css'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import BackToTop from '../components/BackToTop.astro'
+import { getSettings } from '../lib/site'
+import type { Image } from '../lib/content'
+
+interface Props {
+  title?: string
+  description?: string
+  /** Nav item to mark as the current page. */
+  active?: 'home' | 'listings' | 'about' | 'contact'
+  /** The page opens on a full-bleed photo: the nav starts transparent over it. */
+  overHero?: boolean
+  image?: Image | null
+  noindex?: boolean
+  schema?: object[]
+}
+
+const { title, description, active, overHero = false, image, noindex = false, schema = [] } = Astro.props
+const settings = await getSettings()
+
+const site = (Astro.site?.href ?? 'https://www.dreamhomes-realty.com').replace(/\/$/, '')
+const canonical = new URL(Astro.url.pathname, site).href
+const fullTitle = !title ? settings.seo.title || settings.companyName : title.includes(settings.companyName) ? title : `${title} | ${settings.companyName}`
+const metaDescription = description || settings.seo.description
+const share = image ?? settings.seo.image
+const shareUrl = share ? new URL(share.src, site).href : undefined
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: settings.companyName,
+  url: site,
+  logo: new URL('/logo.png', site).href,
+  telephone: settings.phones[0]?.display,
+  email: settings.email || undefined,
+  address: { '@type': 'PostalAddress', streetAddress: settings.address.split('\n')[0], addressLocality: 'Ladyville', addressCountry: 'BZ' },
+  sameAs: settings.socials.map((s) => s.url),
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="theme-color" content="#0a1f33" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={settings.companyName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical} />
+    {shareUrl && <meta property="og:image" content={shareUrl} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {[organization, ...schema].map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header settings={settings} active={active} overHero={overHero} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer settings={settings} />
+    <BackToTop />
+
+    <script>
+      // Fade sections up as they scroll into view.
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]')
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (!e.isIntersecting) continue
+              e.target.classList.add('is-revealed')
+              io.unobserve(e.target)
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        )
+        els.forEach((el) => io.observe(el))
+      } else {
+        els.forEach((el) => el.classList.add('is-revealed'))
+      }
+    </script>
+  </body>
+</html>

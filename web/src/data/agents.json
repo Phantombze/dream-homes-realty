@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Dean Sosa",
+    "slug": "dean-sosa",
+    "role": "Dream Homes Realty Agent",
+    "photo": {
+      "src": "/images/seed/agent-dean-sosa.webp",
+      "alt": "Dean Sosa, Dream Homes Realty agent"
+    },
+    "phone": "+501 672-8009",
+    "whatsapp": "5016728009",
+    "email": "deansosa130@gmail.com"
+  }
+]

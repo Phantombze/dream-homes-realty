@@ -1,0 +1,242 @@
+---
+import { Icon } from 'astro-icon/components'
+import { telHref, whatsappHref } from '../lib/content'
+import { SOCIAL_ICONS, type Settings } from '../lib/site'
+
+interface Props {
+  settings: Settings
+}
+
+const { settings } = Astro.props
+const wa = whatsappHref(settings.whatsapp)
+const socials = [...settings.socials, ...(wa ? [{ platform: 'whatsapp', url: wa }] : [])]
+const [first, ...rest] = settings.companyName.split(' ')
+const year = new Date().getFullYear()
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <a href="/" class="footer__logo">{first} <span>{rest.join(' ')}</span></a>
+      <p>{settings.tagline}</p>
+      <div class="footer__socials">
+        {
+          socials.map((s) => {
+            const meta = SOCIAL_ICONS[s.platform] ?? { icon: 'lucide:link', label: s.platform }
+            return (
+              <a href={s.url} target="_blank" rel="noopener" aria-label={meta.label} title={meta.label}>
+                <Icon name={meta.icon} />
+              </a>
+            )
+          })
+        }
+      </div>
+    </div>
+
+    {
+      settings.footerColumns.map((col) => (
+        <div>
+          <h3 class="footer__heading">{col.title}</h3>
+          <ul class="footer__links">
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+
+    <div>
+      <h3 class="footer__heading">Contact</h3>
+      <ul class="footer__contact">
+        {
+          settings.phones.length > 0 && (
+            <li>
+              <Icon name="lucide:phone" />
+              <span>
+                {settings.phones.map((p) => (
+                  <a href={telHref(p.display)}>{p.display}</a>
+                ))}
+              </span>
+            </li>
+          )
+        }
+        {
+          settings.email && (
+            <li>
+              <Icon name="lucide:mail" />
+              <a href={`mailto:${settings.email}`}>{settings.email}</a>
+            </li>
+          )
+        }
+        {
+          settings.address && (
+            <li>
+              <Icon name="lucide:map-pin" />
+              <span class="footer__address">{settings.address}</span>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer__bar">
+    <span>&copy; {year} {settings.copyright}</span>
+    <a href="/sitemap.xml">Sitemap</a>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    background: var(--navy);
+    color: var(--white);
+    padding-top: clamp(56px, 8vw, 80px);
+  }
+  .footer::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 50%, var(--navy) 100%);
+  }
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.3fr repeat(auto-fit, minmax(180px, 1fr));
+    gap: 48px;
+    padding-bottom: 56px;
+  }
+  .footer__logo {
+    display: inline-block;
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    color: var(--white);
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  .footer__logo span {
+    color: var(--gold);
+  }
+  .footer__brand p {
+    color: #b0b8c1;
+    font-size: 0.92rem;
+    max-width: 320px;
+    margin-bottom: 24px;
+  }
+  .footer__socials {
+    display: flex;
+    gap: 10px;
+  }
+  .footer__socials a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--gold);
+    color: var(--navy);
+    transition:
+      transform 0.3s,
+      background 0.3s;
+  }
+  .footer__socials a:hover {
+    transform: translateY(-3px);
+    background: var(--white);
+  }
+  .footer__socials svg {
+    width: 17px;
+    height: 17px;
+  }
+  .footer__heading {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .footer__heading::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 2px;
+    background: var(--gold);
+    margin-top: 10px;
+  }
+  .footer__links,
+  .footer__contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .footer__links a {
+    color: #b0b8c1;
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition:
+      color 0.3s,
+      padding 0.3s;
+  }
+  .footer__links a:hover {
+    color: var(--gold);
+    padding-left: 5px;
+  }
+  .footer__contact li {
+    display: flex;
+    gap: 14px;
+    color: #b0b8c1;
+    font-size: 0.92rem;
+  }
+  .footer__contact svg {
+    width: 18px;
+    height: 18px;
+    color: var(--gold);
+    flex: none;
+    margin-top: 3px;
+  }
+  .footer__contact a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+  .footer__contact a:hover {
+    color: var(--gold);
+  }
+  .footer__address {
+    white-space: pre-line;
+  }
+  .footer__bar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .footer__bar a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .footer__bar a:hover {
+    color: var(--gold);
+  }
+  @media (max-width: 900px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 520px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

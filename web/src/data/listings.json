@@ -1,0 +1,373 @@
+[
+  {
+    "legacyId": 1,
+    "title": "Apartments – Single Room",
+    "slug": "ladyville-apartments",
+    "status": "available",
+    "deal": "rent",
+    "price": 650,
+    "category": "apartments",
+    "location": "ladyville",
+    "badge": {
+      "text": "Single Room",
+      "style": "navy"
+    },
+    "featured": false,
+    "summary": "Single-room apartment for rent in Ladyville, with electricity, water and butane included in the rent and parking on site.",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "kitchens": 1,
+    "floorArea": null,
+    "landSize": null,
+    "highlights": [],
+    "amenities": [
+      {
+        "label": "Electricity Provided",
+        "icon": "electricity"
+      },
+      {
+        "label": "Water Provided",
+        "icon": "water"
+      },
+      {
+        "label": "Gas Butane Provided",
+        "icon": "gas"
+      },
+      {
+        "label": "Parking Available",
+        "icon": "parking"
+      }
+    ],
+    "gallery": [
+      {
+        "src": "/images/seed/ladyville-apartments-01.webp",
+        "alt": "Apartments- Single Room, photo 1"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-02.webp",
+        "alt": "Apartments- Single Room, photo 2"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-03.webp",
+        "alt": "Apartments- Single Room, photo 3"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-04.webp",
+        "alt": "Apartments- Single Room, photo 4"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-05.webp",
+        "alt": "Apartments- Single Room, photo 5"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-06.webp",
+        "alt": "Apartments- Single Room, photo 6"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-07.webp",
+        "alt": "Apartments- Single Room, photo 7"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-08.webp",
+        "alt": "Apartments- Single Room, photo 8"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-09.webp",
+        "alt": "Apartments- Single Room, photo 9"
+      },
+      {
+        "src": "/images/seed/ladyville-apartments-10.webp",
+        "alt": "Apartments- Single Room, photo 10"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
+    "agent": "dean-sosa",
+    "order": 100,
+    "publishedAt": null
+  },
+  {
+    "legacyId": 2,
+    "title": "Apartments – Double Room",
+    "slug": "ladyville-appartments-double-room",
+    "status": "available",
+    "deal": "rent",
+    "price": 850,
+    "category": "apartments",
+    "location": "ladyville",
+    "badge": {
+      "text": "Double Room",
+      "style": "navy"
+    },
+    "featured": false,
+    "summary": "Two-bedroom apartment for rent in Ladyville, with electricity, water and butane included in the rent and parking on site.",
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "kitchens": 1,
+    "floorArea": null,
+    "landSize": null,
+    "highlights": [],
+    "amenities": [
+      {
+        "label": "Electricity Provided",
+        "icon": "electricity"
+      },
+      {
+        "label": "Water Provided",
+        "icon": "water"
+      },
+      {
+        "label": "Butane Provided",
+        "icon": "gas"
+      },
+      {
+        "label": "Parking Available",
+        "icon": "parking"
+      }
+    ],
+    "gallery": [
+      {
+        "src": "/images/seed/ladyville-appartments-double-room-01.webp",
+        "alt": "Apartments - Double Room, photo 1"
+      },
+      {
+        "src": "/images/seed/ladyville-appartments-double-room-02.webp",
+        "alt": "Apartments - Double Room, photo 2"
+      },
+      {
+        "src": "/images/seed/ladyville-appartments-double-room-03.webp",
+        "alt": "Apartments - Double Room, photo 3"
+      },
+      {
+        "src": "/images/seed/ladyville-appartments-double-room-04.webp",
+        "alt": "Apartments - Double Room, photo 4"
+      },
+      {
+        "src": "/images/seed/ladyville-appartments-double-room-05.webp",
+        "alt": "Apartments - Double Room, photo 5"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
+    "agent": "dean-sosa",
+    "order": 99,
+    "publishedAt": null
+  },
+  {
+    "legacyId": 3,
+    "title": "Tubal – 1 Acre Land",
+    "slug": "tubal-land-for-sale",
+    "status": "available",
+    "deal": "sale",
+    "price": 396000,
+    "category": "land",
+    "location": "ladyville",
+    "badge": {
+      "text": "1 Acre Land",
+      "style": "gold"
+    },
+    "featured": false,
+    "summary": "One acre of land on the highway in Tubal, Ladyville, a prime location for a home or business.",
+    "bedrooms": null,
+    "bathrooms": null,
+    "kitchens": null,
+    "floorArea": null,
+    "landSize": {
+      "value": 1,
+      "unit": "acres"
+    },
+    "highlights": [
+      "Highway Property",
+      "Premium Location"
+    ],
+    "amenities": [],
+    "gallery": [
+      {
+        "src": "/images/seed/tubal-land-for-sale-01.webp",
+        "alt": "Tubal - 1 Acre Land, photo 1"
+      },
+      {
+        "src": "/images/seed/tubal-land-for-sale-02.webp",
+        "alt": "Tubal - 1 Acre Land, photo 2"
+      },
+      {
+        "src": "/images/seed/tubal-land-for-sale-03.webp",
+        "alt": "Tubal - 1 Acre Land, photo 3"
+      },
+      {
+        "src": "/images/seed/tubal-land-for-sale-04.webp",
+        "alt": "Tubal - 1 Acre Land, photo 4"
+      },
+      {
+        "src": "/images/seed/tubal-land-for-sale-05.webp",
+        "alt": "Tubal - 1 Acre Land, photo 5"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "17°33'26.1\"N 88°18'48.2\"W",
+    "agent": "dean-sosa",
+    "order": 98,
+    "publishedAt": null
+  },
+  {
+    "legacyId": 4,
+    "title": "17.4 Acres of Land – San Pablo",
+    "slug": "san-pablo",
+    "status": "available",
+    "deal": "sale",
+    "price": 87000,
+    "category": "land",
+    "location": "san-pablo",
+    "badge": {
+      "text": "17.4 Acres",
+      "style": "navy"
+    },
+    "featured": false,
+    "summary": "17.4 acres of land with highway frontage in San Pablo, Orange Walk.",
+    "bedrooms": null,
+    "bathrooms": null,
+    "kitchens": null,
+    "floorArea": null,
+    "landSize": {
+      "value": 17.4,
+      "unit": "acres"
+    },
+    "highlights": [
+      "Highway Property",
+      "Premium Location"
+    ],
+    "amenities": [],
+    "gallery": [
+      {
+        "src": "/images/seed/san-pablo-01.webp",
+        "alt": "17.4 Acres of Land - San Pablo, photo 1"
+      },
+      {
+        "src": "/images/seed/san-pablo-02.webp",
+        "alt": "17.4 Acres of Land - San Pablo, photo 2"
+      },
+      {
+        "src": "/images/seed/san-pablo-03.webp",
+        "alt": "17.4 Acres of Land - San Pablo, photo 3"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "18.22272, -88.54784",
+    "agent": "dean-sosa",
+    "order": 97,
+    "publishedAt": null
+  },
+  {
+    "legacyId": 5,
+    "title": "Vista Del Mar – Home",
+    "slug": "vista-home-for-sale",
+    "status": "available",
+    "deal": "sale",
+    "price": 300000,
+    "category": "homes",
+    "location": "ladyville",
+    "badge": {
+      "text": "New Home",
+      "style": "gold"
+    },
+    "featured": true,
+    "summary": "Newly built three-bedroom, two-bathroom home in Vista Del Mar, Ladyville. Tiled throughout, air-conditioned rooms, burglar-barred windows, fully fenced, with parking.",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "kitchens": 1,
+    "floorArea": null,
+    "landSize": null,
+    "highlights": [],
+    "amenities": [
+      {
+        "label": "Parking Available",
+        "icon": "parking"
+      },
+      {
+        "label": "Tiled",
+        "icon": "tiled"
+      },
+      {
+        "label": "Burglar Barred Windows",
+        "icon": "security"
+      },
+      {
+        "label": "Fully Fenced",
+        "icon": "fenced"
+      },
+      {
+        "label": "Air Conditioned Rooms",
+        "icon": "ac"
+      }
+    ],
+    "gallery": [
+      {
+        "src": "/images/seed/vista-home-for-sale-01.webp",
+        "alt": "Vista Del Mar - Home, photo 1"
+      },
+      {
+        "src": "/images/seed/vista-home-for-sale-02.webp",
+        "alt": "Vista Del Mar - Home, photo 2"
+      },
+      {
+        "src": "/images/seed/vista-home-for-sale-03.webp",
+        "alt": "Vista Del Mar - Home, photo 3"
+      },
+      {
+        "src": "/images/seed/vista-home-for-sale-04.webp",
+        "alt": "Vista Del Mar - Home, photo 4"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "17°33'16.6\"N 88°17'13.2\"W",
+    "agent": "dean-sosa",
+    "order": 96,
+    "publishedAt": null
+  },
+  {
+    "legacyId": 6,
+    "title": "Vista Del Mar – Home",
+    "slug": "new-vista-home-for-sale",
+    "status": "available",
+    "deal": "sale",
+    "price": 400000,
+    "category": "homes",
+    "location": "ladyville",
+    "badge": {
+      "text": "New Home",
+      "style": "gold"
+    },
+    "featured": true,
+    "summary": "Newly built three-bedroom, two-bathroom home in Vista Del Mar, Ladyville.",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "kitchens": 1,
+    "floorArea": null,
+    "landSize": null,
+    "highlights": [],
+    "amenities": [],
+    "gallery": [
+      {
+        "src": "/images/seed/new-vista-home-for-sale-01.webp",
+        "alt": "Vista Del Mar - Home, photo 1"
+      },
+      {
+        "src": "/images/seed/new-vista-home-for-sale-02.webp",
+        "alt": "Vista Del Mar - Home, photo 2"
+      },
+      {
+        "src": "/images/seed/new-vista-home-for-sale-03.webp",
+        "alt": "Vista Del Mar - Home, photo 3"
+      },
+      {
+        "src": "/images/seed/new-vista-home-for-sale-04.webp",
+        "alt": "Vista Del Mar - Home, photo 4"
+      }
+    ],
+    "videoUrl": "",
+    "mapLocation": "17°33'16.5\"N 88°17'13.7\"W",
+    "agent": "dean-sosa",
+    "order": 95,
+    "publishedAt": null
+  }
+]

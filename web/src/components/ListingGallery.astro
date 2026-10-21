@@ -1,0 +1,411 @@
+---
+/**
+ * Listing photos: a mosaic (one large, four small) that opens a full-screen
+ * viewer with arrow keys, swipe, a thumbnail strip and a counter. A YouTube
+ * tour, if the listing has one, is the first item in the viewer.
+ */
+import { Icon } from 'astro-icon/components'
+import type { Image } from '../lib/content'
+
+interface Props {
+  images: Image[]
+  videoId?: string
+  title: string
+}
+
+const { images, videoId = '', title } = Astro.props
+const tiles = images.slice(0, 5)
+const items = [...(videoId ? [{ type: 'video', id: videoId }] : []), ...images.map((i) => ({ type: 'image', src: i.src, alt: i.alt }))]
+const offset = videoId ? 1 : 0
+---
+
+<section class:list={['gallery', `gallery--${Math.min(tiles.length, 5)}`]} data-gallery>
+  {
+    tiles.length === 0 ? (
+      <div class="gallery__empty">
+        <Icon name="lucide:image" />
+        <span>Photos coming soon</span>
+      </div>
+    ) : (
+      tiles.map((img, i) => (
+        <button type="button" class="gallery__tile" data-open={i + offset} aria-label={`Open photo ${i + 1} of ${images.length}`}>
+          <img src={img.src} srcset={img.srcset} sizes={i === 0 ? '(max-width: 900px) 100vw, 60vw' : '25vw'} alt={img.alt} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
+        </button>
+      ))
+    )
+  }
+  <div class="gallery__actions">
+    {
+      videoId && (
+        <button type="button" class="gallery__btn" data-open="0">
+          <Icon name="lucide:play" /> Video Tour
+        </button>
+      )
+    }
+    {
+      images.length > 0 && (
+        <button type="button" class="gallery__btn" data-open={offset}>
+          <Icon name="lucide:images" /> All {images.length} Photos
+        </button>
+      )
+    }
+  </div>
+</section>
+
+<dialog class="viewer" data-viewer aria-label={`${title} photos`}>
+  <div class="viewer__top">
+    <span class="viewer__count"><span data-viewer-index>1</span> / {items.length}</span>
+    <button type="button" class="viewer__icon" data-viewer-close aria-label="Close"><Icon name="lucide:x" /></button>
+  </div>
+  <div class="viewer__stage" data-viewer-stage>
+    <button type="button" class="viewer__nav viewer__nav--prev" data-viewer-prev aria-label="Previous"><Icon name="lucide:chevron-left" /></button>
+    <div class="viewer__frame" data-viewer-frame></div>
+    <button type="button" class="viewer__nav viewer__nav--next" data-viewer-next aria-label="Next"><Icon name="lucide:chevron-right" /></button>
+  </div>
+  <div class="viewer__thumbs" data-viewer-thumbs>
+    {
+      items.map((it, i) => (
+        <button type="button" data-go={i} aria-label={`Show item ${i + 1}`}>
+          {it.type === 'video' ? (
+            <span class="viewer__thumb-video">
+              <Icon name="lucide:play" />
+            </span>
+          ) : (
+            <img src={(it as any).src} alt="" loading="lazy" decoding="async" />
+          )}
+        </button>
+      ))
+    }
+  </div>
+  <script type="application/json" data-viewer-items set:html={JSON.stringify(items)} />
+</dialog>
+
+<style>
+  .gallery {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    height: clamp(340px, 52vw, 560px);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .gallery__tile {
+    position: relative;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    cursor: zoom-in;
+    background: #ece9e2;
+  }
+  .gallery__tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      transform 0.9s var(--ease),
+      filter 0.4s;
+  }
+  .gallery__tile:hover img {
+    transform: scale(1.05);
+    filter: brightness(0.92);
+  }
+  .gallery__tile:first-child {
+    grid-row: 1 / -1;
+  }
+  .gallery--1 {
+    grid-template-columns: 1fr;
+  }
+  .gallery--2 {
+    grid-template-columns: 2fr 1fr;
+  }
+  .gallery--2 .gallery__tile:nth-child(2) {
+    grid-row: 1 / -1;
+  }
+  .gallery--3 {
+    grid-template-columns: 2fr 1fr;
+  }
+  .gallery--4 {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+  .gallery--4 .gallery__tile:nth-child(4) {
+    grid-column: 2 / -1;
+  }
+  .gallery__empty {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 10px;
+    background: #ece9e2;
+    color: var(--faint);
+    font-weight: 600;
+  }
+  .gallery__empty svg {
+    width: 40px;
+    height: 40px;
+  }
+  .gallery__actions {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    gap: 10px;
+  }
+  .gallery__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--navy);
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s;
+  }
+  .gallery__btn:hover {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .gallery__btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  @media (max-width: 760px) {
+    .gallery,
+    .gallery--2,
+    .gallery--3,
+    .gallery--4 {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      height: auto;
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius);
+    }
+    .gallery__tile:not(:first-child) {
+      display: none;
+    }
+  }
+
+  /* --- Full-screen viewer --- */
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(6, 18, 30, 0.97);
+    color: var(--white);
+  }
+  .viewer[open] {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+  .viewer::backdrop {
+    background: rgba(6, 18, 30, 0.97);
+  }
+  .viewer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+  }
+  .viewer__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .viewer__icon,
+  .viewer__nav {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .viewer__icon:hover,
+  .viewer__nav:hover {
+    background: var(--gold);
+  }
+  .viewer__icon svg,
+  .viewer__nav svg {
+    width: 24px;
+    height: 24px;
+  }
+  .viewer__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    min-height: 0;
+  }
+  .viewer__frame {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+  }
+  .viewer__frame :global(img) {
+    max-width: 100%;
+    max-height: calc(100dvh - 190px);
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    animation: viewer-in 0.4s var(--ease);
+  }
+  .viewer__frame :global(iframe) {
+    width: min(1100px, 100%);
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: var(--radius-sm);
+  }
+  @keyframes viewer-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+  .viewer__thumbs {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px 20px;
+    overflow-x: auto;
+    justify-content: safe center;
+    scrollbar-width: none;
+  }
+  .viewer__thumbs button {
+    flex: none;
+    width: 76px;
+    height: 56px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #1b2b3b;
+    opacity: 0.55;
+    cursor: pointer;
+    transition:
+      opacity 0.3s,
+      border-color 0.3s;
+  }
+  .viewer__thumbs button.is-on {
+    opacity: 1;
+    border-color: var(--gold);
+  }
+  .viewer__thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .viewer__thumb-video {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: var(--gold);
+  }
+  .viewer__thumb-video svg {
+    width: 22px;
+    height: 22px;
+  }
+  @media (max-width: 760px) {
+    .viewer__nav {
+      position: absolute;
+      z-index: 2;
+      width: 40px;
+      height: 40px;
+    }
+    .viewer__nav--prev {
+      left: 8px;
+    }
+    .viewer__nav--next {
+      right: 8px;
+    }
+    .viewer__stage {
+      grid-template-columns: 1fr;
+      padding: 0;
+    }
+  }
+</style>
+
+<script>
+  type Item = { type: 'image'; src: string; alt: string } | { type: 'video'; id: string }
+
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+    const viewer = gallery.nextElementSibling as HTMLDialogElement
+    const items: Item[] = JSON.parse(viewer.querySelector('[data-viewer-items]')!.textContent || '[]')
+    if (!items.length) return
+    const frame = viewer.querySelector<HTMLElement>('[data-viewer-frame]')!
+    const indexEl = viewer.querySelector<HTMLElement>('[data-viewer-index]')!
+    const thumbs = [...viewer.querySelectorAll<HTMLButtonElement>('[data-go]')]
+    let index = 0
+
+    const render = () => {
+      const it = items[index]
+      frame.replaceChildren()
+      if (it.type === 'video') {
+        const iframe = document.createElement('iframe')
+        iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(it.id)}?rel=0&modestbranding=1&autoplay=1`
+        iframe.title = 'Video tour'
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'
+        iframe.allowFullscreen = true
+        frame.append(iframe)
+      } else {
+        const img = document.createElement('img')
+        img.src = it.src
+        img.alt = it.alt
+        frame.append(img)
+      }
+      indexEl.textContent = String(index + 1)
+      thumbs.forEach((t, i) => t.classList.toggle('is-on', i === index))
+      thumbs[index]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
+    }
+    const go = (n: number) => {
+      index = (n + items.length) % items.length
+      render()
+    }
+    const open = (n: number) => {
+      viewer.showModal()
+      document.body.style.overflow = 'hidden'
+      go(n)
+    }
+
+    gallery.querySelectorAll<HTMLElement>('[data-open]').forEach((el) => el.addEventListener('click', () => open(Number(el.dataset.open))))
+    viewer.querySelector('[data-viewer-prev]')!.addEventListener('click', () => go(index - 1))
+    viewer.querySelector('[data-viewer-next]')!.addEventListener('click', () => go(index + 1))
+    viewer.querySelector('[data-viewer-close]')!.addEventListener('click', () => viewer.close())
+    thumbs.forEach((t) => t.addEventListener('click', () => go(Number(t.dataset.go))))
+    viewer.addEventListener('close', () => {
+      frame.replaceChildren() // stops a playing video
+      document.body.style.overflow = ''
+    })
+    viewer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(index + 1)
+      if (e.key === 'ArrowLeft') go(index - 1)
+    })
+
+    // Swipe on touch screens.
+    let startX = 0
+    frame.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true })
+    frame.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX
+      if (Math.abs(dx) > 50) go(index + (dx < 0 ? 1 : -1))
+    })
+  })
+</script>

@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "eyebrow": "Get in Touch",
+    "title": "Contact Dream Homes Realty",
+    "text": "Tell us what you’re looking for and our team will respond with clear next steps."
+  },
+  "eyebrow": "Contact",
+  "title": "We’re Here to Help",
+  "formTitle": "Send a Message",
+  "formIntro": "Share the basics and we’ll route you to the right agent.",
+  "topics": [
+    "Buying",
+    "Selling",
+    "Renting",
+    "Investing",
+    "General"
+  ],
+  "successMessage": "Thank you — your message has been sent. We’ll be in touch shortly.",
+  "seo": {
+    "title": "Contact",
+    "description": "Call, WhatsApp or message Dream Homes Realty in Ladyville, Belize."
+  }
+}

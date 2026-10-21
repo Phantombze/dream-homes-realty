@@ -1,0 +1,92 @@
+{
+  "companyName": "Dream Homes Realty",
+  "tagline": "We can find you the perfect property and help you locate the home of your dreams.",
+  "logo": {
+    "src": "/logo.png",
+    "alt": "Dream Homes Realty"
+  },
+  "phones": [
+    {
+      "label": "Main",
+      "display": "+501 672-8009"
+    },
+    {
+      "label": "Office",
+      "display": "+501 615-9599"
+    }
+  ],
+  "email": "deansosa130@gmail.com",
+  "whatsapp": "5016728009",
+  "address": "9 1/2 Philip Goldson Highway\nLadyville, Belize",
+  "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d256.3305971458928!2d-88.30303356777137!3d17.55067935731709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5c59c360916175%3A0x73e6fc8fa01a7115!2sDream%20Homes%20Realty!5e1!3m2!1sen!2sbz!4v1771451730950!5m2!1sen!2sbz",
+  "mapLink": "https://maps.app.goo.gl/7LZmcT6MHBVzDbaH8",
+  "officeHours": [
+    {
+      "days": "Monday – Friday",
+      "hours": "9:00am – 5:00pm"
+    },
+    {
+      "days": "Saturday",
+      "hours": "By appointment"
+    },
+    {
+      "days": "Sunday",
+      "hours": "Closed"
+    }
+  ],
+  "socials": [
+    {
+      "platform": "instagram",
+      "url": "https://www.instagram.com/dreamhomesrealty_bz/"
+    },
+    {
+      "platform": "facebook",
+      "url": "https://www.facebook.com/dreamhomesrealty.bze"
+    }
+  ],
+  "footerColumns": [
+    {
+      "title": "General Info",
+      "links": [
+        {
+          "label": "About Us",
+          "href": "/about/"
+        },
+        {
+          "label": "All Properties",
+          "href": "/listings/"
+        },
+        {
+          "label": "Contact Us",
+          "href": "/contact/"
+        }
+      ]
+    },
+    {
+      "title": "Quick Links",
+      "links": [
+        {
+          "label": "Homes for Sale",
+          "href": "/listings/?category=homes"
+        },
+        {
+          "label": "Apartments for Rent",
+          "href": "/listings/?category=apartments"
+        },
+        {
+          "label": "Land for Sale",
+          "href": "/listings/?category=land"
+        }
+      ]
+    }
+  ],
+  "copyright": "Dream Homes Realty. All rights reserved.",
+  "seo": {
+    "title": "Dream Homes Realty | Belize Real Estate",
+    "description": "Homes, land and rentals in Belize from Dream Homes Realty in Ladyville. Browse current listings and speak directly with our agent.",
+    "image": {
+      "src": "/images/seed/hero-1.webp",
+      "alt": "Modern living room"
+    }
+  }
+}

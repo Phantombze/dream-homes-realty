@@ -1,0 +1,384 @@
+---
+/**
+ * Site navigation.
+ *
+ * Over a hero photo it starts transparent and turns solid navy once the page
+ * scrolls; on every other page it is solid from the start. The current page is
+ * marked with a gold bar under a white label — the old site only tinted the
+ * label gold, which disappeared against the hero photos.
+ */
+import { Icon } from 'astro-icon/components'
+import { telHref, whatsappHref } from '../lib/content'
+import type { Settings } from '../lib/site'
+
+interface Props {
+  settings: Settings
+  active?: string
+  overHero?: boolean
+}
+
+const { settings, active, overHero = false } = Astro.props
+const links = [
+  { key: 'home', label: 'Home', href: '/' },
+  { key: 'listings', label: 'Listings', href: '/listings/' },
+  { key: 'about', label: 'About Us', href: '/about/' },
+  { key: 'contact', label: 'Contact', href: '/contact/' },
+]
+const phone = settings.phones[0]
+const wa = whatsappHref(settings.whatsapp, 'Hi Dream Homes, I found you on your website.')
+---
+
+<header class:list={['nav', { 'nav--over-hero': overHero, 'is-solid': !overHero }]} data-nav>
+  <div class="nav__inner">
+    <a class="nav__brand" href="/" aria-label={`${settings.companyName} — home`}>
+      <img src="/logo.png" alt="" width="44" height="30" />
+      <span>{settings.companyName}</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      {
+        links.map((l) => (
+          <a href={l.href} class:list={['nav__link', { 'is-active': active === l.key }]} aria-current={active === l.key ? 'page' : undefined}>
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="nav__actions">
+      {
+        phone && (
+          <a class="nav__phone" href={telHref(phone.display)}>
+            <Icon name="lucide:phone" />
+            <span>{phone.display}</span>
+          </a>
+        )
+      }
+      <a class="btn btn-gold nav__cta" href="/contact/">Book a Viewing</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu" data-nav-toggle>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="nav-drawer" data-nav-drawer hidden>
+  <div class="drawer__backdrop" data-nav-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <nav class="drawer__links" aria-label="Main">
+      {
+        links.map((l, i) => (
+          <a href={l.href} class:list={['drawer__link', { 'is-active': active === l.key }]} style={`--i:${i}`}>
+            <span>{l.label}</span>
+            <Icon name="lucide:arrow-right" />
+          </a>
+        ))
+      }
+    </nav>
+    <div class="drawer__contact">
+      {
+        phone && (
+          <a class="btn btn-gold" href={telHref(phone.display)}>
+            <Icon name="lucide:phone" /> Call {phone.display}
+          </a>
+        )
+      }
+      {
+        wa && (
+          <a class="btn btn-ghost" href={wa} target="_blank" rel="noopener">
+            <Icon name="fa6-brands:whatsapp" /> WhatsApp
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    color: var(--white);
+    transition:
+      background 0.4s var(--ease),
+      box-shadow 0.4s var(--ease),
+      backdrop-filter 0.4s;
+  }
+  /* A soft shade behind the transparent nav keeps it legible on bright photos. */
+  .nav--over-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 -40px 0;
+    background: linear-gradient(to bottom, rgba(10, 31, 51, 0.55), transparent);
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .nav.is-solid {
+    background: rgba(10, 31, 51, 0.94);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.18);
+  }
+  .nav.is-solid::before {
+    opacity: 0;
+  }
+
+  .nav__inner {
+    position: relative;
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    transition: height 0.4s var(--ease);
+  }
+  .nav.is-solid .nav__inner {
+    height: 70px;
+  }
+
+  .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .nav__brand img {
+    width: 44px;
+    height: auto;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+  .nav__link {
+    position: relative;
+    padding: 10px 14px;
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+    transition: color 0.3s;
+  }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 2px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__link:hover {
+    color: var(--white);
+  }
+  .nav__link:hover::after {
+    transform: scaleX(0.5);
+  }
+  .nav__link.is-active {
+    color: var(--white);
+  }
+  .nav__link.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .nav__phone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .nav__phone svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gold);
+  }
+  .nav__cta {
+    padding: 12px 20px;
+    font-size: 0.72rem;
+  }
+
+  .nav__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .nav__toggle span {
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition:
+      transform 0.3s,
+      opacity 0.3s;
+  }
+  .nav__toggle[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav__toggle[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav__toggle[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 1180px) {
+    .nav__phone {
+      display: none;
+    }
+  }
+  @media (max-width: 960px) {
+    .nav__links,
+    .nav__cta {
+      display: none;
+    }
+    .nav__toggle {
+      display: flex;
+    }
+    .nav__actions {
+      margin-left: auto;
+    }
+    .nav__inner,
+    .nav.is-solid .nav__inner {
+      height: 68px;
+    }
+    .nav__brand {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* --- Mobile drawer --- */
+  .drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 49;
+  }
+  .drawer[hidden] {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 15, 25, 0.55);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .drawer__panel {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(380px, 100%);
+    background: var(--navy-dark);
+    padding: 96px 28px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform: translateX(100%);
+    transition: transform 0.5s var(--ease);
+  }
+  .drawer.is-open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .drawer.is-open .drawer__backdrop {
+    opacity: 1;
+  }
+  .drawer.is-open .drawer__panel {
+    transform: none;
+  }
+  .drawer__links {
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    opacity: 0;
+    transform: translateX(20px);
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.5s var(--ease),
+      color 0.3s;
+    transition-delay: calc(0.08s * var(--i) + 0.1s);
+  }
+  .drawer.is-open .drawer__link {
+    opacity: 1;
+    transform: none;
+  }
+  .drawer__link svg {
+    width: 20px;
+    height: 20px;
+    color: var(--gold);
+  }
+  .drawer__link.is-active {
+    color: var(--gold);
+  }
+  .drawer__contact {
+    display: grid;
+    gap: 12px;
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]')!
+  const drawer = document.querySelector<HTMLElement>('[data-nav-drawer]')!
+
+  // Over a hero, go solid once the visitor has scrolled past the top.
+  if (nav.classList.contains('nav--over-hero')) {
+    const update = () => nav.classList.toggle('is-solid', window.scrollY > 40 || drawer.classList.contains('is-open'))
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+  }
+
+  const setOpen = (open: boolean) => {
+    drawer.hidden = false
+    drawer.classList.toggle('is-open', open)
+    toggle.setAttribute('aria-expanded', String(open))
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
+    document.body.style.overflow = open ? 'hidden' : ''
+    if (nav.classList.contains('nav--over-hero')) nav.classList.toggle('is-solid', open || window.scrollY > 40)
+  }
+  toggle.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open')))
+  drawer.querySelectorAll('[data-nav-close], a').forEach((el) => el.addEventListener('click', () => setOpen(false)))
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false))
+</script>

@@ -1,0 +1,372 @@
+---
+/**
+ * The home page hero: full-screen slides that glide sideways, a slow zoom on
+ * each photo, and the eyebrow / title / text fading up one after another —
+ * the same motion as the original site. Every slide is edited in Payload
+ * (Home Page → Hero), and there can be any number of them.
+ */
+import { Icon } from 'astro-icon/components'
+import type { Image } from '../lib/content'
+import { SOCIAL_ICONS, type Social } from '../lib/site'
+
+interface Slide {
+  eyebrow: string
+  title: string
+  highlight: string
+  text: string
+  image: Image | null
+}
+
+interface Props {
+  slides: Slide[]
+  seconds: number
+  searchPlaceholder: string
+  socials: Social[]
+}
+
+const { slides, seconds, searchPlaceholder, socials } = Astro.props
+const count = Math.max(slides.length, 1)
+---
+
+<section class="hero" data-hero data-interval={seconds * 1000} aria-roledescription="carousel" aria-label="Featured">
+  <div class="hero__track" style={`width:${count * 100}%`} data-hero-track>
+    {
+      slides.map((s, i) => (
+        <div class:list={['hero__panel', { 'is-visible': i === 0 }]} style={`width:${100 / count}%`} aria-roledescription="slide" aria-label={`${i + 1} of ${count}`} aria-hidden={i === 0 ? undefined : 'true'}>
+          {s.image && (
+            <img
+              class="hero__bg"
+              src={s.image.src}
+              srcset={s.image.srcset}
+              sizes="100vw"
+              alt=""
+              style={s.image.position ? `object-position:${s.image.position}` : undefined}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+              decoding="async"
+            />
+          )}
+          <div class="hero__content container">
+            <span class="hero__tag">{s.eyebrow}</span>
+            {i === 0 ? (
+              <h1 class="hero__title">
+                {s.title} <span>{s.highlight}</span>
+              </h1>
+            ) : (
+              <p class="hero__title" role="heading" aria-level="2">
+                {s.title} <span>{s.highlight}</span>
+              </p>
+            )}
+            <p class="hero__text">{s.text}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  {
+    socials.length > 0 && (
+      <div class="hero__socials">
+        {socials.map((s) => (
+          <a href={s.url} target="_blank" rel="noopener">
+            {SOCIAL_ICONS[s.platform]?.label ?? s.platform}
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  <form class="hero__search" action="/listings/" method="get" role="search">
+    <Icon name="lucide:search" class="hero__search-icon" />
+    <label class="sr-only" for="hero-q">Search listings</label>
+    <input id="hero-q" name="q" type="search" placeholder={searchPlaceholder} autocomplete="off" />
+    <button type="submit">Search</button>
+  </form>
+
+  {
+    count > 1 && (
+      <div class="hero__nav">
+        <span class="hero__num" data-hero-num>01</span>
+        <div class="hero__dots">
+          {slides.map((_, i) => (
+            <button type="button" class:list={['hero__dot', { 'is-active': i === 0 }]} aria-label={`Show slide ${i + 1}`} data-hero-dot={i} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    height: 92vh;
+    min-height: 640px;
+    max-height: 1000px;
+    overflow: hidden;
+    background: var(--navy-dark);
+    color: var(--white);
+  }
+  .hero__track {
+    display: flex;
+    height: 100%;
+    transition: transform var(--t-hero);
+  }
+  .hero__panel {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 10s linear;
+  }
+  .hero__panel.is-visible .hero__bg {
+    transform: scale(1.15);
+  }
+  .hero__panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(15, 43, 70, 0.82) 0%, rgba(15, 43, 70, 0.42) 50%, rgba(0, 0, 0, 0.2) 100%);
+  }
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    padding-top: 40px;
+    padding-bottom: 160px;
+  }
+  .hero__tag,
+  .hero__title,
+  .hero__text {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: var(--t-hero);
+  }
+  .hero__tag {
+    display: block;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+    transform: translateY(20px);
+  }
+  .hero__title {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(2.8rem, 7vw, 5.6rem);
+    line-height: 1.08;
+    max-width: 12ch;
+    margin-bottom: 24px;
+  }
+  .hero__title span {
+    color: var(--gold);
+  }
+  .hero__text {
+    font-size: 1.1rem;
+    max-width: 540px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .hero__panel.is-visible .hero__tag {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.3s;
+  }
+  .hero__panel.is-visible .hero__title {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.5s;
+  }
+  .hero__panel.is-visible .hero__text {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.7s;
+  }
+
+  .hero__socials {
+    position: absolute;
+    right: var(--gutter);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .hero__socials a {
+    writing-mode: vertical-rl;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    transition: color 0.3s;
+  }
+  .hero__socials a:hover {
+    color: var(--gold);
+  }
+
+  .hero__search {
+    position: absolute;
+    left: 50%;
+    bottom: 110px;
+    transform: translateX(-50%);
+    z-index: 5;
+    width: min(720px, calc(100% - 2 * var(--gutter)));
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius);
+  }
+  .hero__search :global(.hero__search-icon) {
+    width: 20px;
+    height: 20px;
+    margin-left: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    flex: none;
+  }
+  .hero__search input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    padding: 14px 14px;
+    color: var(--white);
+    font: inherit;
+    font-size: 1rem;
+    outline: none;
+  }
+  .hero__search input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .hero__search button {
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--gold);
+    color: var(--white);
+    padding: 0 32px;
+    align-self: stretch;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s;
+  }
+  .hero__search button:hover {
+    background: var(--white);
+    color: var(--navy);
+  }
+
+  .hero__nav {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 44px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  @media (min-width: 1400px) {
+    .hero__nav {
+      left: calc((100vw - var(--page-max)) / 2 + var(--gutter));
+    }
+  }
+  .hero__num {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--gold);
+  }
+  .hero__dots {
+    display: flex;
+    gap: 10px;
+  }
+  .hero__dot {
+    width: 40px;
+    height: 3px;
+    padding: 0;
+    border: 0;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: width 0.4s var(--ease), background 0.4s;
+  }
+  .hero__dot.is-active {
+    width: 80px;
+    background: var(--gold);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      height: 100svh;
+      min-height: 600px;
+    }
+    .hero__socials {
+      display: none;
+    }
+    .hero__content {
+      padding-bottom: 200px;
+    }
+    .hero__search {
+      bottom: 96px;
+    }
+    .hero__search button {
+      padding: 0 18px;
+    }
+    .hero__nav {
+      bottom: 36px;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-hero]').forEach((hero) => {
+    const track = hero.querySelector<HTMLElement>('[data-hero-track]')!
+    const panels = [...hero.querySelectorAll<HTMLElement>('.hero__panel')]
+    const dots = [...hero.querySelectorAll<HTMLButtonElement>('[data-hero-dot]')]
+    const num = hero.querySelector<HTMLElement>('[data-hero-num]')
+    const interval = Number(hero.dataset.interval) || 6000
+    if (panels.length < 2) return
+
+    let index = 0
+    let timer: number | undefined
+
+    const show = (n: number) => {
+      index = (n + panels.length) % panels.length
+      track.style.transform = `translateX(-${(index * 100) / panels.length}%)`
+      panels.forEach((p, i) => {
+        p.classList.toggle('is-visible', i === index)
+        p.setAttribute('aria-hidden', String(i !== index))
+      })
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === index))
+      if (num) num.textContent = String(index + 1).padStart(2, '0')
+    }
+    const start = () => {
+      window.clearInterval(timer)
+      timer = window.setInterval(() => show(index + 1), interval)
+    }
+
+    dots.forEach((d) =>
+      d.addEventListener('click', () => {
+        show(Number(d.dataset.heroDot))
+        start()
+      }),
+    )
+    // Pause while the tab is hidden so it doesn't race through slides on return.
+    document.addEventListener('visibilitychange', () => (document.hidden ? window.clearInterval(timer) : start()))
+    start()
+  })
+</script>

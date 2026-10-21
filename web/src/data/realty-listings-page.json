@@ -1,0 +1,12 @@
+{
+  "eyebrow": "Belize Real Estate",
+  "title": "Properties for Sale & Rent",
+  "intro": "Homes, land and apartments across Belize, each personally selected by our team. Filter by type or search by place.",
+  "searchPlaceholder": "Search by location, price, or keyword…",
+  "featuredTitle": "Featured Properties",
+  "emptyText": "No properties match your search. Try another area or clear the filters.",
+  "seo": {
+    "title": "Listings",
+    "description": "Browse homes, land and apartments for sale and rent in Belize."
+  }
+}

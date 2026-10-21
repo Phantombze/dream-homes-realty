@@ -1,0 +1,286 @@
+---
+/**
+ * A featured property shown large: photo on one side, the details on the
+ * other. Sits above the listings grid for whatever the editor ticked
+ * "Featured" on.
+ */
+import { Icon } from 'astro-icon/components'
+import type { Listing } from '../lib/content'
+
+interface Props {
+  listing: Listing
+  reverse?: boolean
+}
+
+const { listing: l, reverse = false } = Astro.props
+const thumbs = l.gallery.slice(1, 4)
+---
+
+<article class:list={['spot', { 'spot--reverse': reverse }]} data-reveal>
+  <a class="spot__media" href={l.href} aria-label={l.title}>
+    {
+      l.cover ? (
+        <img src={l.cover.src} srcset={l.cover.srcset} sizes="(max-width: 900px) 100vw, 60vw" alt={l.cover.alt} loading="lazy" decoding="async" />
+      ) : (
+        <div class="spot__empty">
+          <Icon name="lucide:image" />
+        </div>
+      )
+    }
+    <span class="spot__flag"><Icon name="lucide:star" /> Featured</span>
+  </a>
+
+  <div class="spot__body">
+    <div class="spot__tags">
+      <span>{l.dealLabel}</span>
+      {l.category && <span>{l.category.name}</span>}
+      {l.status !== 'available' && <span class="is-status">{l.statusLabel}</span>}
+    </div>
+    <h3><a href={l.href}>{l.title}</a></h3>
+    {
+      l.location && (
+        <p class="spot__loc">
+          <Icon name="lucide:map-pin" /> {l.location.label}
+        </p>
+      )
+    }
+    <div class="spot__price">
+      {l.priceLabel}
+      {l.priceSuffix && <small>{l.priceSuffix}</small>}
+    </div>
+    {l.summary && <p class="spot__summary">{l.summary}</p>}
+    {
+      l.facts.length > 0 && (
+        <ul class="spot__facts">
+          {l.facts.map((f) => (
+            <li>
+              <Icon name={`lucide:${f.icon}`} />
+              <strong>{f.value}</strong>
+              <span>{f.label}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <div class="spot__foot">
+      {
+        thumbs.length > 0 && (
+          <div class="spot__thumbs" aria-hidden="true">
+            {thumbs.map((t) => (
+              <img src={t.src} alt="" loading="lazy" decoding="async" />
+            ))}
+            {l.gallery.length > 4 && <span>+{l.gallery.length - 4}</span>}
+          </div>
+        )
+      }
+      <a class="btn btn-navy" href={l.href}>View Property <Icon name="lucide:arrow-right" /></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .spot {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(15, 43, 70, 0.05);
+  }
+  .spot--reverse .spot__media {
+    order: 2;
+  }
+  .spot__media {
+    position: relative;
+    min-height: 420px;
+    overflow: hidden;
+    background: #ece9e2;
+  }
+  .spot__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+  .spot:hover .spot__media img {
+    transform: scale(1.05);
+  }
+  .spot__empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--faint);
+  }
+  .spot__empty svg {
+    width: 40px;
+    height: 40px;
+  }
+  .spot__flag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--white);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    box-shadow: 0 6px 16px rgba(197, 160, 89, 0.35);
+  }
+  .spot__flag svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .spot__body {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(28px, 4vw, 48px);
+  }
+  .spot__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .spot__tags span {
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .spot__tags .is-status {
+    background: #f8e3e3;
+    color: #a33;
+  }
+  h3 {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    color: var(--navy);
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  .spot__loc {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .spot__loc svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gold-dark);
+  }
+  .spot__price {
+    margin-top: 18px;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--gold-dark);
+  }
+  .spot__price small {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+  .spot__summary {
+    margin-top: 14px;
+    color: var(--muted);
+  }
+  .spot__facts {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 18px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .spot__facts li {
+    display: grid;
+    justify-items: start;
+    gap: 2px;
+  }
+  .spot__facts svg {
+    width: 20px;
+    height: 20px;
+    color: var(--gold-dark);
+    margin-bottom: 4px;
+  }
+  .spot__facts strong {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .spot__facts span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .spot__foot {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .spot__thumbs {
+    display: flex;
+  }
+  .spot__thumbs img,
+  .spot__thumbs span {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--surface);
+    object-fit: cover;
+    margin-left: -12px;
+  }
+  .spot__thumbs img:first-child {
+    margin-left: 0;
+  }
+  .spot__thumbs span {
+    display: grid;
+    place-items: center;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .spot {
+      grid-template-columns: 1fr;
+    }
+    .spot--reverse .spot__media {
+      order: 0;
+    }
+    .spot__media {
+      min-height: 0;
+      aspect-ratio: 16 / 10;
+    }
+  }
+</style>

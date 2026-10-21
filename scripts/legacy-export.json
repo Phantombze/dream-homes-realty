@@ -1,0 +1,450 @@
+{
+    "listings": [
+        {
+            "id": 1,
+            "title": "Apartments- Single Room",
+            "slug": "ladyville-apartments",
+            "location": "Ladyville, Belize City",
+            "price": "650 / Monthly",
+            "badge": "Single Room",
+            "badge_style": "navy",
+            "featured": 0,
+            "image_url": "/uploads/listings/listing_69963d975d19a9.11711972.jpg",
+            "video_url": "",
+            "url": "#",
+            "map_query": "17°32'56.1\"N 88°17'21.4\"W",
+            "stats_json": "[\"1 Bedroom\",\"1 Bathroom\",\"1 Kitchen\"]",
+            "keywords_json": "[\"Belize\",\"Ladyville\",\"Appartments\"]",
+            "amenities_json": "[{\"label\":\"Electricity Provided\",\"icon\":\"utilities\"},{\"label\":\"Water Provided\",\"icon\":\"utilities\"},{\"label\":\"Gas Butane Provided\",\"icon\":\"utilities\"},{\"label\":\"Parking Available\",\"icon\":\"parking\"}]",
+            "created_at": "2026-02-18 16:04:17",
+            "updated_at": "2026-03-10 13:33:50"
+        },
+        {
+            "id": 2,
+            "title": "Apartments - Double Room",
+            "slug": "ladyville-appartments-double-room",
+            "location": "Ladyville, Belize City",
+            "price": "850 / Monthly",
+            "badge": "Double Room",
+            "badge_style": "navy",
+            "featured": 0,
+            "image_url": "/uploads/listings/listing_69b073c5981e12.01451154.jpg",
+            "video_url": "",
+            "url": "#",
+            "map_query": "17°32'56.1\"N 88°17'21.4\"W",
+            "stats_json": "[\"2 Bedroom\",\"1 Bathroom\",\"1 Kitchen\"]",
+            "keywords_json": "[\"Belize\",\"Ladyville\",\"Appartments\"]",
+            "amenities_json": "[{\"label\":\"Electricity Provided\",\"icon\":\"utilities\"},{\"label\":\"Water Provided\",\"icon\":\"utilities\"},{\"label\":\"Butane Provided\",\"icon\":\"utilities\"},{\"label\":\"Parking Available\",\"icon\":\"parking\"}]",
+            "created_at": "2026-03-10 10:37:17",
+            "updated_at": "2026-03-10 13:40:53"
+        },
+        {
+            "id": 3,
+            "title": "Tubal - 1 Acre Land",
+            "slug": "tubal-land-for-sale",
+            "location": "Ladyville, Belize City",
+            "price": "396,000",
+            "badge": "1 Acre Land",
+            "badge_style": "gold",
+            "featured": 0,
+            "image_url": "/uploads/listings/listing_69b0757fb66d37.01992793.webp",
+            "video_url": "",
+            "url": "#",
+            "map_query": "17°33'26.1\"N 88°18'48.2\"W",
+            "stats_json": "[\"Highway Property\",\"Premium Location\"]",
+            "keywords_json": "[\"Belize\",\"Ladyville\",\"Land for sale\"]",
+            "amenities_json": "[]",
+            "created_at": "2026-03-10 13:48:15",
+            "updated_at": "2026-03-10 13:51:04"
+        },
+        {
+            "id": 4,
+            "title": "17.4 Acres of Land - San Pablo",
+            "slug": "san-pablo",
+            "location": "San Pablo, Orange Walk",
+            "price": "87,000",
+            "badge": "17.4 Acres",
+            "badge_style": "navy",
+            "featured": 0,
+            "image_url": "/uploads/listings/listing_69b07de28da522.43699672.jpg",
+            "video_url": "",
+            "url": "#",
+            "map_query": "18.22272, -88.54784",
+            "stats_json": "[\"Highway Property\",\"Premium Location\"]",
+            "keywords_json": "[]",
+            "amenities_json": "[]",
+            "created_at": "2026-03-10 14:24:02",
+            "updated_at": "2026-03-10 14:24:02"
+        },
+        {
+            "id": 5,
+            "title": "Vista Del Mar - Home",
+            "slug": "vista-home-for-sale",
+            "location": "Ladyville, Belize City",
+            "price": "300,000",
+            "badge": "New Home",
+            "badge_style": "gold",
+            "featured": 1,
+            "image_url": "",
+            "video_url": "",
+            "url": "#",
+            "map_query": "17°33'16.6\"N 88°17'13.2\"W",
+            "stats_json": "[\"3 Bedroom\",\"2 Bathroom\",\"1 Kitchen\"]",
+            "keywords_json": "[\"Belize\",\"Ladyville\",\"Home for sale\"]",
+            "amenities_json": "[{\"label\":\"Parking Available\",\"icon\":\"parking\"},{\"label\":\"Tiled\",\"icon\":\"default\"},{\"label\":\"Burglar Barred Windows\",\"icon\":\"default\"},{\"label\":\"Fully Fenced\",\"icon\":\"default\"},{\"label\":\"Air Conditioned Rooms\",\"icon\":\"default\"}]",
+            "created_at": "2026-03-10 14:33:32",
+            "updated_at": "2026-03-10 14:38:48"
+        },
+        {
+            "id": 6,
+            "title": "Vista Del Mar - Home",
+            "slug": "new-vista-home-for-sale",
+            "location": "Ladyville, Belize City",
+            "price": "400,000",
+            "badge": "New Home",
+            "badge_style": "gold",
+            "featured": 1,
+            "image_url": "/uploads/listings/listing_69b080f90d9ac3.27252861.webp",
+            "video_url": "",
+            "url": "#",
+            "map_query": "17°33'16.5\"N 88°17'13.7\"W",
+            "stats_json": "[\"3 Bedroom\",\"2 Bathroom\",\"1 Kitchen\"]",
+            "keywords_json": "[\"Belize\",\"Ladyville\",\"Home for sale\"]",
+            "amenities_json": "[]",
+            "created_at": "2026-03-10 14:37:13",
+            "updated_at": "2026-03-10 14:37:13"
+        }
+    ],
+    "listing_images": [
+        {
+            "id": 1,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69963d975d19a9.11711972.jpg",
+            "is_primary": 1,
+            "sort_order": 0,
+            "created_at": "2026-02-18 16:30:47"
+        },
+        {
+            "id": 8,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b07191b82ff1.03892454.jpg",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 13:31:29"
+        },
+        {
+            "id": 9,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b07197605879.78877492.jpg",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 13:31:35"
+        },
+        {
+            "id": 10,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b0719cb8b961.33113205.jpg",
+            "is_primary": 0,
+            "sort_order": 3,
+            "created_at": "2026-03-10 13:31:40"
+        },
+        {
+            "id": 11,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b071a1757bb2.94655280.jpg",
+            "is_primary": 0,
+            "sort_order": 4,
+            "created_at": "2026-03-10 13:31:45"
+        },
+        {
+            "id": 12,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b071abe2e423.20904809.jpg",
+            "is_primary": 0,
+            "sort_order": 5,
+            "created_at": "2026-03-10 13:31:55"
+        },
+        {
+            "id": 15,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b0745d9ed7e8.43189112.jpg",
+            "is_primary": 0,
+            "sort_order": 6,
+            "created_at": "2026-03-10 13:43:25"
+        },
+        {
+            "id": 16,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b0745d9f7bf7.53671275.jpg",
+            "is_primary": 0,
+            "sort_order": 7,
+            "created_at": "2026-03-10 13:43:25"
+        },
+        {
+            "id": 17,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b0745da017d7.82431490.jpg",
+            "is_primary": 0,
+            "sort_order": 8,
+            "created_at": "2026-03-10 13:43:25"
+        },
+        {
+            "id": 18,
+            "listing_id": 1,
+            "file_path": "/uploads/listings/listing_69b0745da0c100.73318422.jpg",
+            "is_primary": 0,
+            "sort_order": 9,
+            "created_at": "2026-03-10 13:43:25"
+        },
+        {
+            "id": 14,
+            "listing_id": 2,
+            "file_path": "/uploads/listings/listing_69b073c5981e12.01451154.jpg",
+            "is_primary": 1,
+            "sort_order": 0,
+            "created_at": "2026-03-10 13:40:53"
+        },
+        {
+            "id": 2,
+            "listing_id": 2,
+            "file_path": "/uploads/listings/listing_69b06e3f494a28.12114231.jpg",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 13:17:19"
+        },
+        {
+            "id": 3,
+            "listing_id": 2,
+            "file_path": "/uploads/listings/listing_69b06e4ac84bf2.37859126.jpg",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 13:17:30"
+        },
+        {
+            "id": 5,
+            "listing_id": 2,
+            "file_path": "/uploads/listings/listing_69b06e73cfe5e6.25311087.jpg",
+            "is_primary": 0,
+            "sort_order": 3,
+            "created_at": "2026-03-10 13:18:11"
+        },
+        {
+            "id": 19,
+            "listing_id": 2,
+            "file_path": "/uploads/listings/listing_69b0750c5609d4.24877474.jpg",
+            "is_primary": 0,
+            "sort_order": 4,
+            "created_at": "2026-03-10 13:46:20"
+        },
+        {
+            "id": 20,
+            "listing_id": 3,
+            "file_path": "/uploads/listings/listing_69b0757fb66d37.01992793.webp",
+            "is_primary": 1,
+            "sort_order": 0,
+            "created_at": "2026-03-10 13:48:15"
+        },
+        {
+            "id": 21,
+            "listing_id": 3,
+            "file_path": "/uploads/listings/listing_69b0757fb83605.38822827.webp",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 13:48:15"
+        },
+        {
+            "id": 22,
+            "listing_id": 3,
+            "file_path": "/uploads/listings/listing_69b0757fb90df0.94947535.webp",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 13:48:15"
+        },
+        {
+            "id": 23,
+            "listing_id": 3,
+            "file_path": "/uploads/listings/listing_69b0757fba0904.47798789.webp",
+            "is_primary": 0,
+            "sort_order": 3,
+            "created_at": "2026-03-10 13:48:15"
+        },
+        {
+            "id": 24,
+            "listing_id": 3,
+            "file_path": "/uploads/listings/listing_69b0757fbb25e4.95520857.webp",
+            "is_primary": 0,
+            "sort_order": 4,
+            "created_at": "2026-03-10 13:48:15"
+        },
+        {
+            "id": 25,
+            "listing_id": 4,
+            "file_path": "/uploads/listings/listing_69b07de28da522.43699672.jpg",
+            "is_primary": 1,
+            "sort_order": 0,
+            "created_at": "2026-03-10 14:24:02"
+        },
+        {
+            "id": 26,
+            "listing_id": 4,
+            "file_path": "/uploads/listings/listing_69b07de28ed0f8.37813818.jpg",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 14:24:02"
+        },
+        {
+            "id": 27,
+            "listing_id": 4,
+            "file_path": "/uploads/listings/listing_69b07de28fa040.47379894.jpg",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 14:24:02"
+        },
+        {
+            "id": 28,
+            "listing_id": 5,
+            "file_path": "/uploads/listings/listing_69b0801c981233.48481501.jpg",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 14:33:32"
+        },
+        {
+            "id": 29,
+            "listing_id": 5,
+            "file_path": "/uploads/listings/listing_69b0801c989519.93976325.jpg",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 14:33:32"
+        },
+        {
+            "id": 30,
+            "listing_id": 5,
+            "file_path": "/uploads/listings/listing_69b0801c98f646.45967968.jpg",
+            "is_primary": 0,
+            "sort_order": 3,
+            "created_at": "2026-03-10 14:33:32"
+        },
+        {
+            "id": 31,
+            "listing_id": 5,
+            "file_path": "/uploads/listings/listing_69b0801c995935.58585446.jpg",
+            "is_primary": 0,
+            "sort_order": 4,
+            "created_at": "2026-03-10 14:33:32"
+        },
+        {
+            "id": 32,
+            "listing_id": 6,
+            "file_path": "/uploads/listings/listing_69b080f90d9ac3.27252861.webp",
+            "is_primary": 1,
+            "sort_order": 0,
+            "created_at": "2026-03-10 14:37:13"
+        },
+        {
+            "id": 33,
+            "listing_id": 6,
+            "file_path": "/uploads/listings/listing_69b080f90f8cb0.75781018.webp",
+            "is_primary": 0,
+            "sort_order": 1,
+            "created_at": "2026-03-10 14:37:13"
+        },
+        {
+            "id": 34,
+            "listing_id": 6,
+            "file_path": "/uploads/listings/listing_69b080f9108597.80936407.webp",
+            "is_primary": 0,
+            "sort_order": 2,
+            "created_at": "2026-03-10 14:37:13"
+        },
+        {
+            "id": 35,
+            "listing_id": 6,
+            "file_path": "/uploads/listings/listing_69b080f91189b0.29484857.webp",
+            "is_primary": 0,
+            "sort_order": 3,
+            "created_at": "2026-03-10 14:37:13"
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Land Properties",
+            "image_url": "https://dreamhomes-realty.com/uploads/media/4.webp",
+            "url": "#",
+            "count_label": "",
+            "created_at": "2026-02-18 15:58:12",
+            "updated_at": "2026-02-19 15:57:35"
+        },
+        {
+            "id": 2,
+            "name": "Appartments",
+            "image_url": "https://www.dreamhomes-realty.com/uploads/media/Ladyville-Laundry-Mat-Front-Appartments-2.jpg",
+            "url": "#",
+            "count_label": "",
+            "created_at": "2026-02-18 15:58:17",
+            "updated_at": "2026-02-18 16:00:36"
+        },
+        {
+            "id": 3,
+            "name": "Homes",
+            "image_url": "https://dreamhomes-realty.com/uploads/media/Scene_1.jpg",
+            "url": "#",
+            "count_label": "",
+            "created_at": "2026-02-18 15:58:23",
+            "updated_at": "2026-02-19 15:58:55"
+        }
+    ],
+    "listing_categories": [
+        {
+            "listing_id": 1,
+            "category_id": 2
+        },
+        {
+            "listing_id": 2,
+            "category_id": 2
+        },
+        {
+            "listing_id": 3,
+            "category_id": 1
+        },
+        {
+            "listing_id": 4,
+            "category_id": 1
+        },
+        {
+            "listing_id": 5,
+            "category_id": 3
+        },
+        {
+            "listing_id": 6,
+            "category_id": 3
+        }
+    ],
+    "settings": {
+        "about.community_image": "/uploads/media/LCH.jpg",
+        "about.youth_image": "/uploads/media/Youths_Support_2.jpeg",
+        "agent.email": "deansosa130@gmail.com",
+        "agent.name": "Dean Sosa",
+        "agent.phone": "+501 672-8009",
+        "agent.photo": "/uploads/media/Dean_PFP.jpg",
+        "contact.address": "9 1/2 Philip Goldson Highway",
+        "contact.email_main": "deansosa130@gmail.com",
+        "contact.form_to_email": "medinasmaterial1@gmail.com",
+        "contact.maps_query": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d256.3305971458928!2d-88.30303356777137!3d17.55067935731709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5c59c360916175%3A0x73e6fc8fa01a7115!2sDream%20Homes%20Realty!5e1!3m2!1sen!2sbz!4v1771451730950!5m2!1sen!2sbz\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "contact.phone_primary": "+501 672-8009",
+        "contact.phone_secondary": "+501 615-9599",
+        "contact.whatsapp_number": "5016728009",
+        "home.hero_image_1": null,
+        "home.hero_image_2": null,
+        "home.hero_image_3": null,
+        "home.social_1_name": "Instagram",
+        "home.social_1_url": "https://www.instagram.com/dreamhomesrealty_bz/",
+        "home.social_2_name": "Facebook",
+        "home.social_2_url": "https://www.facebook.com/dreamhomesrealty.bze",
+        "home.social_3_name": "LinkedIn",
+        "home.social_3_url": null,
+        "social.facebook_url": "https://www.facebook.com/dreamhomesrealty.bze",
+        "social.instagram_url": "https://www.instagram.com/dreamhomesrealty_bz/",
+        "social.youtube_url": null
+    }
+}

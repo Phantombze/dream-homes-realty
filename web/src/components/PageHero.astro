@@ -1,0 +1,111 @@
+---
+/**
+ * The navy banner at the top of inner pages (About, Contact, Listings).
+ * An optional photo sits behind the navy wash for a little depth.
+ */
+import type { Image } from '../lib/content'
+
+interface Props {
+  eyebrow?: string
+  title: string
+  text?: string
+  image?: Image | null
+  /** Breadcrumb trail shown above the title. */
+  crumbs?: { label: string; href?: string }[]
+}
+
+const { eyebrow, title, text, image, crumbs = [] } = Astro.props
+---
+
+<section class="page-hero">
+  {image && <img class="page-hero__bg" src={image.src} srcset={image.srcset} sizes="100vw" alt="" decoding="async" fetchpriority="high" />}
+  <div class="container page-hero__inner">
+    {
+      crumbs.length > 0 && (
+        <nav class="page-hero__crumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          {crumbs.map((c) => (
+            <>
+              <span aria-hidden="true">/</span>
+              {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+            </>
+          ))}
+        </nav>
+      )
+    }
+    {eyebrow && <span class="eyebrow page-hero__eyebrow">{eyebrow}</span>}
+    <h1>{title}</h1>
+    {text && <p>{text}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--white);
+    background: var(--navy);
+    padding: calc(var(--nav-h) + clamp(40px, 6vw, 72px)) 0 clamp(48px, 7vw, 80px);
+  }
+  .page-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(120deg, rgba(10, 31, 51, 0.96) 0%, rgba(15, 43, 70, 0.88) 55%, rgba(15, 43, 70, 0.7) 100%);
+  }
+  .page-hero::after {
+    content: '';
+    position: absolute;
+    right: -120px;
+    top: -160px;
+    width: 520px;
+    height: 520px;
+    z-index: -1;
+    background: radial-gradient(circle, rgba(197, 160, 89, 0.18) 0%, transparent 70%);
+  }
+  .page-hero__crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .page-hero__crumbs a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+  }
+  .page-hero__crumbs a:hover {
+    color: var(--gold);
+  }
+  .page-hero__eyebrow {
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    max-width: 18ch;
+    margin-bottom: 16px;
+  }
+  p {
+    max-width: 62ch;
+    font-size: 1.08rem;
+    color: rgba(255, 255, 255, 0.82);
+  }
+</style>

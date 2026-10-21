@@ -1,0 +1,104 @@
+---
+/**
+ * The navy call-to-action panel that closes most pages. Each button is set in
+ * the CMS as "call", "whatsapp" or a plain link, so the phone number and
+ * WhatsApp come from Settings and never need typing twice.
+ */
+import { Icon } from 'astro-icon/components'
+import { telHref, whatsappHref } from '../lib/content'
+import type { Settings } from '../lib/site'
+
+type Action = { label: string; action: 'call' | 'whatsapp' | 'link'; href?: string }
+
+interface Props {
+  eyebrow: string
+  title: string
+  text: string
+  primary?: Action
+  secondary?: Action
+  settings: Settings
+}
+
+const { eyebrow, title, text, primary, secondary, settings } = Astro.props
+
+const resolve = (a?: Action) => {
+  if (!a?.label) return null
+  if (a.action === 'call') return { ...a, url: telHref(settings.phones[0]?.display ?? ''), icon: 'lucide:phone', external: false }
+  if (a.action === 'whatsapp') return { ...a, url: whatsappHref(settings.whatsapp), icon: 'fa6-brands:whatsapp', external: true }
+  return { ...a, url: a.href ?? '/', icon: 'lucide:arrow-right', external: false }
+}
+const buttons = [resolve(primary), resolve(secondary)].filter((b) => b && b.url)
+---
+
+<section class="cta" data-reveal>
+  <div class="cta__text">
+    <span class="eyebrow">{eyebrow}</span>
+    <h2>{title}</h2>
+    <p>{text}</p>
+  </div>
+  <div class="cta__buttons">
+    {
+      buttons.map((b, i) => (
+        <a class:list={['btn', i === 0 ? 'btn-gold' : 'btn-ghost']} href={b!.url} target={b!.external ? '_blank' : undefined} rel={b!.external ? 'noopener' : undefined}>
+          <Icon name={b!.icon} /> {b!.label}
+        </a>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    padding: clamp(36px, 6vw, 60px);
+    border-radius: var(--radius);
+    background: var(--navy);
+    color: var(--white);
+    isolation: isolate;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(197, 160, 89, 0.22) 0%, transparent 70%);
+    z-index: -1;
+  }
+  .cta__text {
+    flex: 1;
+    min-width: min(300px, 100%);
+  }
+  .cta .eyebrow {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+  }
+  .cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+    margin-bottom: 14px;
+  }
+  .cta p {
+    opacity: 0.8;
+    font-size: 1.08rem;
+    max-width: 500px;
+  }
+  .cta__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  @media (max-width: 520px) {
+    .cta__buttons,
+    .cta__buttons .btn {
+      width: 100%;
+    }
+  }
+</style>

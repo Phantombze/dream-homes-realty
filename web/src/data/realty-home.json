@@ -1,0 +1,76 @@
+{
+  "heroSlides": [
+    {
+      "eyebrow": "Exclusively Belize",
+      "title": "Find Your Piece of",
+      "highlight": "Paradise.",
+      "text": "Discover the most prestigious properties in Belize, from private island estates to modern beachfront villas.",
+      "image": {
+        "src": "/images/seed/hero-1.webp",
+        "alt": "Bright open-plan living room"
+      }
+    },
+    {
+      "eyebrow": "Luxury Living",
+      "title": "Modern Design Meets",
+      "highlight": "Island Soul.",
+      "text": "Experience architectural excellence designed to blend seamlessly with the natural beauty of the Caribbean coast.",
+      "image": {
+        "src": "/images/seed/hero-2.webp",
+        "alt": "Modern villa with a pool"
+      }
+    },
+    {
+      "eyebrow": "Investment Opportunity",
+      "title": "Secure Your",
+      "highlight": "Future Today.",
+      "text": "Belize is one of the fastest-growing markets in the region. Don't wait — contact us today.",
+      "image": {
+        "src": "/images/seed/hero-3.webp",
+        "alt": "Contemporary home at dusk"
+      }
+    }
+  ],
+  "slideSeconds": 6,
+  "searchPlaceholder": "Search by city, district, or keyword…",
+  "showHeroSocials": true,
+  "listings": {
+    "eyebrow": "Fresh on the Market",
+    "title": "Exclusive Listings",
+    "show": "latest",
+    "limit": 8
+  },
+  "collections": {
+    "eyebrow": "Find Your Match",
+    "title": "Curated Collections",
+    "linkLabel": "View All Listings"
+  },
+  "quote": {
+    "eyebrow": "Why buy from us?",
+    "text": "Every property we sell is personally owned, carefully selected, and priced with long-term value in mind.",
+    "agent": "dean-sosa",
+    "background": {
+      "src": "/images/seed/quote-band.webp",
+      "alt": "Caribbean coastline"
+    }
+  },
+  "cta": {
+    "eyebrow": "Concierge Service",
+    "title": "Selling or Buying?",
+    "text": "Experience the gold standard in Belize real estate.",
+    "primary": {
+      "label": "Speak to Agent",
+      "action": "call",
+      "href": ""
+    },
+    "secondary": {
+      "label": "WhatsApp Us",
+      "action": "whatsapp",
+      "href": ""
+    }
+  },
+  "seo": {
+    "title": "",
+    "description": ""
+  }
+}

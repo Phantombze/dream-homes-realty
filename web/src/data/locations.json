@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Ladyville",
+    "slug": "ladyville",
+    "region": "Belize District",
+    "order": 1
+  },
+  {
+    "name": "San Pablo",
+    "slug": "san-pablo",
+    "region": "Orange Walk District",
+    "order": 2
+  }
+]

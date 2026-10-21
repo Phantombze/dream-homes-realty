@@ -1,0 +1,84 @@
+---
+import { Icon } from 'astro-icon/components'
+import type { Category } from '../lib/content'
+
+interface Props {
+  category: Category
+  count: number
+}
+
+const { category: c, count } = Astro.props
+---
+
+<a class="cat" href={`/listings/?category=${c.slug}`}>
+  {c.image && <img src={c.image.src} srcset={c.image.srcset} sizes="(max-width: 768px) 100vw, 33vw" alt={c.image.alt} loading="lazy" decoding="async" />}
+  <div class="cat__panel">
+    <h3>{c.name}</h3>
+    <div class="cat__meta">
+      <span>{count} {count === 1 ? 'Listing' : 'Listings'}</span>
+      <Icon name="lucide:arrow-right" />
+    </div>
+  </div>
+</a>
+
+<style>
+  .cat {
+    position: relative;
+    display: block;
+    height: 360px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--navy);
+    color: var(--white);
+    text-decoration: none;
+  }
+  .cat img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+  .cat:hover img {
+    transform: scale(1.15);
+  }
+  .cat__panel {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    padding: 20px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: var(--t);
+  }
+  .cat:hover .cat__panel {
+    background: rgba(15, 43, 70, 0.88);
+    border-color: var(--navy);
+  }
+  .cat h3 {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+  .cat__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cat__meta svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s;
+  }
+  .cat:hover .cat__meta svg {
+    transform: translateX(4px);
+  }
+</style>

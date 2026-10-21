@@ -1,0 +1,178 @@
+---
+import { Icon } from 'astro-icon/components'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import HeroSlider from '../components/HeroSlider.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+import ListingCard from '../components/ListingCard.astro'
+import CategoryCard from '../components/CategoryCard.astro'
+import QuoteBand from '../components/QuoteBand.astro'
+import CtaBand from '../components/CtaBand.astro'
+import { getSingle } from '../lib/cms'
+import { toImage } from '../lib/content'
+import { getListings, getSettings, getTaxonomy } from '../lib/site'
+
+const [home, settings, listings, { categories, agents }] = await Promise.all([getSingle('realty-home'), getSettings(), getListings(), getTaxonomy()])
+
+const slides = (home.heroSlides ?? []).map((s: any) => ({ ...s, image: toImage(s.image, s.title) }))
+
+const shown = (home.listings?.show === 'featured' ? listings.filter((l) => l.featured) : listings).slice(0, home.listings?.limit ?? 8)
+const countFor = (slug: string) => listings.filter((l) => l.category?.slug === slug).length
+const agentSlug = typeof home.quote?.agent === 'object' ? home.quote?.agent?.slug : home.quote?.agent
+const quoteAgent = agents.find((a) => a.slug === agentSlug) ?? agents[0] ?? null
+---
+
+<BaseLayout active="home" overHero title={home.seo?.title} description={home.seo?.description} image={slides[0]?.image}>
+  <HeroSlider slides={slides} seconds={home.slideSeconds ?? 6} searchPlaceholder={home.searchPlaceholder} socials={home.showHeroSocials ? settings.socials : []} />
+
+  <div class="container section">
+    <SectionHeader eyebrow={home.listings?.eyebrow} title={home.listings?.title} link={{ label: 'View All Listings', href: '/listings/' }} />
+
+    <div class="rail" data-rail>
+      <div class="rail__track" data-rail-track>
+        {
+          shown.map((l, i) => (
+            <div class="rail__item">
+              <ListingCard listing={l} priority={i < 2} />
+            </div>
+          ))
+        }
+      </div>
+      <div class="rail__controls">
+        <button type="button" class="rail__btn" aria-label="Previous listings" data-rail-prev><Icon name="lucide:arrow-left" /></button>
+        <button type="button" class="rail__btn" aria-label="More listings" data-rail-next><Icon name="lucide:arrow-right" /></button>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <SectionHeader eyebrow={home.collections?.eyebrow} title={home.collections?.title} link={{ label: home.collections?.linkLabel || 'View All', href: '/listings/' }} />
+    <div class="cats">
+      {
+        categories.map((c, i) => (
+          <div data-reveal style={`--reveal-delay:${i * 0.1}s`}>
+            <CategoryCard category={c} count={countFor(c.slug)} />
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="spacer"></div>
+
+    <QuoteBand eyebrow={home.quote?.eyebrow} text={home.quote?.text} agent={quoteAgent} background={toImage(home.quote?.background)} />
+
+    <div class="spacer"></div>
+
+    <CtaBand {...home.cta} settings={settings} />
+  </div>
+</BaseLayout>
+
+<style>
+  .spacer {
+    height: clamp(56px, 8vw, 100px);
+  }
+
+  .rail {
+    position: relative;
+  }
+  .rail__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 3 * 28px) / 4);
+    gap: 28px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 12px 4px 28px;
+    margin: -12px -4px 0;
+    scrollbar-width: none;
+  }
+  .rail__track::-webkit-scrollbar {
+    display: none;
+  }
+  .rail__item {
+    scroll-snap-align: start;
+  }
+  .rail__controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .rail__btn {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--navy);
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s,
+      border-color 0.3s,
+      opacity 0.3s;
+  }
+  .rail__btn:hover:not(:disabled) {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .rail__btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .rail__btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  @media (max-width: 1200px) {
+    .rail__track {
+      grid-auto-columns: calc((100% - 2 * 28px) / 3);
+    }
+  }
+  @media (max-width: 900px) {
+    .rail__track {
+      grid-auto-columns: calc((100% - 24px) / 2);
+      gap: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    .rail__track {
+      grid-auto-columns: 85%;
+      gap: 16px;
+    }
+    .rail__controls {
+      display: none;
+    }
+  }
+
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 900px) {
+    .cats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rail]').forEach((rail) => {
+    const track = rail.querySelector<HTMLElement>('[data-rail-track]')!
+    const prev = rail.querySelector<HTMLButtonElement>('[data-rail-prev]')!
+    const next = rail.querySelector<HTMLButtonElement>('[data-rail-next]')!
+    const step = () => (track.firstElementChild as HTMLElement | null)?.offsetWidth ?? 300
+    const update = () => {
+      prev.disabled = track.scrollLeft < 8
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8
+    }
+    prev.addEventListener('click', () => track.scrollBy({ left: -step() - 28 }))
+    next.addEventListener('click', () => track.scrollBy({ left: step() + 28 }))
+    track.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    update()
+  })
+</script>

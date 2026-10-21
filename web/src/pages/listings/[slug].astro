@@ -1,0 +1,548 @@
+---
+import { Icon } from 'astro-icon/components'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ListingGallery from '../../components/ListingGallery.astro'
+import ListingCard from '../../components/ListingCard.astro'
+import AgentCard from '../../components/AgentCard.astro'
+import { mapEmbed, mapLink } from '../../lib/content'
+import { AMENITY_ICONS, getListings, getTaxonomy } from '../../lib/site'
+
+const [listings, { agents }] = await Promise.all([getListings(), getTaxonomy()])
+const listing = listings.find((l) => l.slug === Astro.params.slug)
+
+if (!listing) {
+  return Astro.rewrite('/404/')
+}
+
+const l = listing
+const agent = agents.find((a) => a.slug === l.agentSlug) ?? agents[0]
+const site = (Astro.site?.href ?? '').replace(/\/$/, '')
+const pageUrl = `${site}${l.href}`
+
+// Same type first, then anything else still available.
+const similar = [
+  ...listings.filter((x) => x.slug !== l.slug && x.category?.slug === l.category?.slug),
+  ...listings.filter((x) => x.slug !== l.slug && x.category?.slug !== l.category?.slug && x.status === 'available'),
+].slice(0, 3)
+
+const description = l.summary || `${l.title} — ${l.dealLabel.toLowerCase()} in ${l.location?.label ?? 'Belize'}. ${l.priceLabel}${l.priceSuffix ? ` ${l.priceSuffix}` : ''}.`
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateListing',
+  name: l.title,
+  url: pageUrl,
+  description,
+  image: l.gallery.map((g) => new URL(g.src, site).href),
+  datePosted: l.updatedAt ?? undefined,
+  offers: l.price
+    ? { '@type': 'Offer', price: l.price, priceCurrency: 'BZD', availability: l.status === 'available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' }
+    : undefined,
+  address: { '@type': 'PostalAddress', addressLocality: l.location?.name, addressRegion: l.location?.region, addressCountry: 'BZ' },
+}
+---
+
+<BaseLayout active="listings" title={l.title} description={description} image={l.cover} schema={[schema]}>
+  <div class="container detail">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/listings/">Listings</a>
+      {
+        l.category && (
+          <>
+            <span aria-hidden="true">/</span>
+            <a href={`/listings/?category=${l.category.slug}`}>{l.category.name}</a>
+          </>
+        )
+      }
+    </nav>
+
+    <header class="head">
+      <div>
+        <div class="head__tags">
+          <span class="pill pill--deal">{l.dealLabel}</span>
+          {l.status !== 'available' && <span class="pill pill--status">{l.statusLabel}</span>}
+          {l.badge && <span class="pill">{l.badge.text}</span>}
+        </div>
+        <h1>{l.title}</h1>
+        {
+          l.location && (
+            <p class="head__loc">
+              <Icon name="lucide:map-pin" /> {l.location.label}
+            </p>
+          )
+        }
+      </div>
+      <div class="head__price">
+        <span>{l.deal === 'rent' ? 'Monthly rent' : 'Asking price'}</span>
+        <strong>{l.priceLabel}{l.priceSuffix && <small>{l.priceSuffix}</small>}</strong>
+      </div>
+    </header>
+
+    <ListingGallery images={l.gallery} videoId={l.videoId} title={l.title} />
+
+    <div class="layout">
+      <div class="main">
+        {
+          (l.facts.length > 0 || l.highlights.length > 0) && (
+            <ul class="facts">
+              {l.facts.map((f) => (
+                <li>
+                  <Icon name={`lucide:${f.icon}`} />
+                  <strong>{f.value}</strong>
+                  <span>{f.label}</span>
+                </li>
+              ))}
+              {l.category && (
+                <li>
+                  <Icon name="lucide:tag" />
+                  <strong>{l.category.name}</strong>
+                  <span>Type</span>
+                </li>
+              )}
+            </ul>
+          )
+        }
+
+        <section class="block">
+          <h2>About this property</h2>
+          {l.summary && <p class="summary">{l.summary}</p>}
+          {l.descriptionHtml && <div class="prose" set:html={l.descriptionHtml} />}
+          {
+            l.highlights.length > 0 && (
+              <ul class="highlights">
+                {l.highlights.map((h) => (
+                  <li>
+                    <Icon name="lucide:sparkles" /> {h}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </section>
+
+        {
+          l.amenities.length > 0 && (
+            <section class="block">
+              <h2>Features &amp; Amenities</h2>
+              <ul class="amenities">
+                {l.amenities.map((a) => (
+                  <li>
+                    <span>
+                      <Icon name={AMENITY_ICONS[a.icon] ?? AMENITY_ICONS.check} />
+                    </span>
+                    {a.label}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          l.mapLocation && (
+            <section class="block">
+              <div class="block__head">
+                <h2>Location</h2>
+                <a href={mapLink(l.mapLocation)} target="_blank" rel="noopener">
+                  Open in Google Maps <Icon name="lucide:external-link" />
+                </a>
+              </div>
+              <div class="map">
+                <iframe src={mapEmbed(l.mapLocation)} title={`Map of ${l.title}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" />
+              </div>
+            </section>
+          )
+        }
+      </div>
+
+      <div class="side">
+        {agent && <AgentCard agent={agent} listingTitle={l.title} listingUrl={pageUrl} listingSlug={l.slug} />}
+        <div class="share">
+          <span>Share</span>
+          <a href={`https://wa.me/?text=${encodeURIComponent(`${l.title} — ${pageUrl}`)}`} target="_blank" rel="noopener" aria-label="Share on WhatsApp"><Icon name="fa6-brands:whatsapp" /></a>
+          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noopener" aria-label="Share on Facebook"><Icon name="fa6-brands:facebook-f" /></a>
+          <button type="button" aria-label="Copy link" data-copy={pageUrl}><Icon name="lucide:link" /></button>
+        </div>
+      </div>
+    </div>
+
+    {
+      similar.length > 0 && (
+        <section class="similar">
+          <div class="similar__head">
+            <span class="eyebrow">Keep browsing</span>
+            <h2 class="heading">Similar Properties</h2>
+          </div>
+          <div class="similar__grid">
+            {similar.map((s) => (
+              <ListingCard listing={s} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .detail {
+    padding-top: calc(70px + 28px);
+    padding-bottom: var(--section-y);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .crumbs a {
+    color: var(--gold-dark);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--navy);
+  }
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 18px 0 28px;
+  }
+  .head__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .pill {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .pill--deal {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .pill--status {
+    background: #f8e3e3;
+    color: #a33;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
+    color: var(--navy);
+  }
+  .head__loc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: var(--muted);
+  }
+  .head__loc svg {
+    width: 18px;
+    height: 18px;
+    color: var(--gold-dark);
+  }
+  .head__price {
+    text-align: right;
+  }
+  .head__price span {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .head__price strong {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    color: var(--gold-dark);
+  }
+  .head__price small {
+    font-family: var(--sans);
+    font-size: 1rem;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+  @media (max-width: 640px) {
+    .head__price {
+      text-align: left;
+    }
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 48px;
+    margin-top: 40px;
+    align-items: start;
+  }
+  .side {
+    position: sticky;
+    top: 94px;
+    display: grid;
+    gap: 16px;
+  }
+  @media (max-width: 1000px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      position: static;
+    }
+  }
+
+  .facts {
+    list-style: none;
+    margin: 0 0 40px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 20px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(15, 43, 70, 0.05);
+  }
+  .facts li {
+    display: grid;
+    gap: 4px;
+  }
+  .facts svg {
+    width: 24px;
+    height: 24px;
+    color: var(--gold-dark);
+    margin-bottom: 6px;
+  }
+  .facts strong {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  .facts span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .block {
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .block:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+  }
+  .block h2 {
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    color: var(--navy);
+    margin-bottom: 18px;
+  }
+  .block__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .block__head a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold-dark);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .block__head a svg {
+    width: 15px;
+    height: 15px;
+  }
+  .summary {
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+  .prose {
+    margin-top: 16px;
+    color: var(--muted);
+  }
+  .prose :global(p + p) {
+    margin-top: 1em;
+  }
+  .highlights {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .highlights li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--navy);
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .highlights svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gold-dark);
+  }
+  .amenities {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .amenities li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .amenities span {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+  }
+  .amenities svg {
+    width: 18px;
+    height: 18px;
+  }
+  .map {
+    border-radius: var(--radius);
+    overflow: hidden;
+    height: 380px;
+    background: #e8e4dc;
+  }
+  .map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .share {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+  }
+  .share span {
+    margin-right: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .share a,
+  .share button {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s,
+      border-color 0.3s;
+  }
+  .share a:hover,
+  .share button:hover,
+  .share button.is-done {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--white);
+  }
+  .share svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .similar {
+    margin-top: var(--section-y);
+  }
+  .similar__head {
+    padding-bottom: 18px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .similar__head .heading {
+    margin-top: 8px;
+  }
+  .similar__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+  @media (max-width: 1000px) {
+    .similar__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .similar__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) =>
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? location.href)
+        btn.classList.add('is-done')
+        btn.setAttribute('aria-label', 'Link copied')
+        setTimeout(() => btn.classList.remove('is-done'), 1800)
+      } catch {
+        /* clipboard blocked: nothing to do */
+      }
+    }),
+  )
+</script>

@@ -1,0 +1,63 @@
+---
+interface Props {
+  eyebrow?: string
+  title: string
+  /** Optional link on the right, e.g. "View all". */
+  link?: { label: string; href: string }
+  /** Small grey hint on the right instead of a link. */
+  hint?: string
+  as?: 'h1' | 'h2'
+}
+
+const { eyebrow, title, link, hint, as: Tag = 'h2' } = Astro.props
+---
+
+<div class="section-header" data-reveal>
+  <div>
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <Tag class="heading">{title}</Tag>
+  </div>
+  {link && <a class="section-header__link" href={link.href}>{link.label}</a>}
+  {!link && hint && <span class="section-header__hint">{hint}</span>}
+  <slot />
+</div>
+
+<style>
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-header .heading {
+    margin-top: 10px;
+  }
+  .section-header__link {
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 5px;
+    transition:
+      color 0.3s,
+      border-color 0.3s;
+  }
+  .section-header__link:hover {
+    color: var(--gold-dark);
+    border-color: transparent;
+  }
+  .section-header__hint {
+    color: var(--faint);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+</style>

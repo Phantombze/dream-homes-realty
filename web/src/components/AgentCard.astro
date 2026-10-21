@@ -1,0 +1,139 @@
+---
+/**
+ * The enquiry panel on a listing page. WhatsApp opens with the property name
+ * and link already typed, so the agent knows which listing the message is
+ * about without asking.
+ */
+import { Icon } from 'astro-icon/components'
+import { telHref, whatsappHref, type Agent } from '../lib/content'
+
+interface Props {
+  agent: Agent
+  listingTitle: string
+  listingUrl: string
+  listingSlug: string
+}
+
+const { agent, listingTitle, listingUrl, listingSlug } = Astro.props
+const wa = whatsappHref(agent.whatsapp, `Hi ${agent.name.split(' ')[0]}, I'm interested in "${listingTitle}" — ${listingUrl}`)
+const mail = agent.email ? `mailto:${agent.email}?subject=${encodeURIComponent(`Enquiry: ${listingTitle}`)}&body=${encodeURIComponent(`Hi, I'd like more information about ${listingTitle}.\n\n${listingUrl}`)}` : ''
+---
+
+<aside class="agent">
+  <span class="eyebrow">Interested?</span>
+  <h3>Schedule a Viewing</h3>
+  <div class="agent__who">
+    {agent.photo && <img src={agent.photo.src} alt={agent.name} width="64" height="64" loading="lazy" />}
+    <div>
+      <strong>{agent.name}</strong>
+      <span>Listing Agent</span>
+    </div>
+  </div>
+  <div class="agent__actions">
+    {
+      agent.phone && (
+        <a class="btn btn-gold" href={telHref(agent.phone)}>
+          <Icon name="lucide:phone" /> Call {agent.phone}
+        </a>
+      )
+    }
+    {
+      wa && (
+        <a class="btn btn-ghost" href={wa} target="_blank" rel="noopener">
+          <Icon name="fa6-brands:whatsapp" /> WhatsApp
+        </a>
+      )
+    }
+    {
+      mail && (
+        <a class="btn btn-ghost" href={mail}>
+          <Icon name="lucide:mail" /> Email
+        </a>
+      )
+    }
+    <a class="agent__form" href={`/contact/?listing=${listingSlug}`}>Or send a message <Icon name="lucide:arrow-right" /></a>
+  </div>
+</aside>
+
+<style>
+  .agent {
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    background: var(--navy);
+    color: var(--white);
+    box-shadow: var(--shadow-lg);
+    isolation: isolate;
+  }
+  .agent::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(197, 160, 89, 0.25), transparent 70%);
+    z-index: -1;
+  }
+  .eyebrow {
+    color: var(--gold);
+  }
+  h3 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    margin: 8px 0 22px;
+  }
+  .agent__who {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .agent__who img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    object-fit: cover;
+    object-position: top;
+  }
+  .agent__who strong {
+    display: block;
+    font-size: 1.1rem;
+  }
+  .agent__who span {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .agent__actions {
+    display: grid;
+    gap: 10px;
+  }
+  .agent__actions .btn {
+    width: 100%;
+  }
+  .agent__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .agent__form:hover {
+    color: var(--gold);
+  }
+  .agent__form svg {
+    width: 15px;
+    height: 15px;
+  }
+</style>

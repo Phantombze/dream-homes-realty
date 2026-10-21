@@ -1,0 +1,269 @@
+/*
+ * Dream Homes Realty — design tokens and the few rules every page shares.
+ * Component styles live in each component's <style> block.
+ *
+ * Palette, type and easing are carried over from the original site so the
+ * home page looks the way it did; spacing and radius were tightened up.
+ */
+@import '@fontsource-variable/montserrat';
+@import '@fontsource-variable/playfair-display';
+
+:root {
+  --gold: #c5a059;
+  --gold-dark: #a8853f;
+  --gold-soft: #f4ecdc;
+  --navy: #0f2b46;
+  --navy-dark: #0a1f33;
+  --navy-light: #1a3c5e;
+  --white: #ffffff;
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --line: #e7e3da;
+  --text: #1d232b;
+  --muted: #5f6873;
+  --faint: #8c939b;
+
+  --serif: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  --sans: 'Montserrat Variable', 'Montserrat', system-ui, sans-serif;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 2px 8px rgba(15, 43, 70, 0.06);
+  --shadow: 0 15px 40px rgba(15, 43, 70, 0.08);
+  --shadow-lg: 0 25px 50px rgba(15, 43, 70, 0.18);
+
+  --ease: cubic-bezier(0.25, 1, 0.33, 1);
+  --t: 0.5s var(--ease);
+  --t-hero: 0.8s var(--ease);
+
+  --page-max: 1320px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --section-y: clamp(56px, 8vw, 100px);
+  --nav-h: 84px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img,
+iframe,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 200;
+  background: var(--gold);
+  color: var(--white);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* --- Layout primitives ---------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.section {
+  padding-top: var(--section-y);
+  padding-bottom: var(--section-y);
+}
+
+/* --- Type ----------------------------------------------------------------- */
+
+.eyebrow {
+  display: block;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.heading {
+  font-family: var(--serif);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: clamp(2rem, 3.6vw, 2.8rem);
+  letter-spacing: -0.01em;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 62ch;
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s,
+    transform 0.3s var(--ease),
+    box-shadow 0.3s;
+  white-space: nowrap;
+}
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: var(--white);
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+}
+.btn-gold:hover {
+  background: var(--gold-dark);
+}
+
+.btn-navy {
+  background: var(--navy);
+  color: var(--white);
+}
+.btn-navy:hover {
+  background: var(--navy-light);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--white);
+}
+.btn-ghost:hover {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--navy);
+  color: var(--navy);
+}
+.btn-outline:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+/* --- Scroll reveal --------------------------------------------------------
+ * Elements marked data-reveal fade up as they enter the viewport. The script
+ * in BaseLayout adds .is-revealed; without JS (or with reduced motion) they
+ * are simply visible.
+ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

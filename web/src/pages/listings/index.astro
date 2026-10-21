@@ -1,0 +1,532 @@
+---
+/**
+ * All properties. Everything is rendered on the server (so search engines and
+ * no-JS visitors see every listing); the filter bar then narrows the grid in
+ * the browser instantly and keeps the URL in sync, so a filtered view can be
+ * shared or bookmarked — /listings/?category=land&deal=sale&q=ladyville.
+ */
+import { Icon } from 'astro-icon/components'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PageHero from '../../components/PageHero.astro'
+import ListingCard from '../../components/ListingCard.astro'
+import ListingSpotlight from '../../components/ListingSpotlight.astro'
+import CtaBand from '../../components/CtaBand.astro'
+import { getSingle } from '../../lib/cms'
+import { getListings, getSettings, getTaxonomy } from '../../lib/site'
+
+const [page, settings, listings, { categories }] = await Promise.all([getSingle('realty-listings-page'), getSettings(), getListings(), getTaxonomy()])
+
+const url = Astro.url.searchParams
+const initial = {
+  q: url.get('q') ?? '',
+  category: url.get('category') ?? '',
+  deal: url.get('deal') ?? '',
+  sort: url.get('sort') ?? 'newest',
+}
+
+const featured = listings.filter((l) => l.featured && l.status === 'available').slice(0, 2)
+const countFor = (slug: string) => listings.filter((l) => l.category?.slug === slug).length
+const hasRentals = listings.some((l) => l.deal === 'rent')
+const hasSales = listings.some((l) => l.deal === 'sale')
+const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
+---
+
+<BaseLayout active="listings" overHero title={page.seo?.title || 'Listings'} description={page.seo?.description}>
+  <PageHero eyebrow={page.eyebrow} title={page.title} text={page.intro} image={heroImage} crumbs={[{ label: 'Listings' }]}>
+    <ul class="stats">
+      <li><strong>{listings.filter((l) => l.status === 'available').length}</strong> Available now</li>
+      {categories.map((c) => <li><strong>{countFor(c.slug)}</strong> {c.name}</li>)}
+    </ul>
+  </PageHero>
+
+  <div class="filters" data-filters>
+    <div class="container filters__inner">
+      <label class="filters__search">
+        <Icon name="lucide:search" />
+        <span class="sr-only">Search listings</span>
+        <input type="search" name="q" value={initial.q} placeholder={page.searchPlaceholder} autocomplete="off" data-filter-q />
+      </label>
+
+      <div class="filters__chips" role="group" aria-label="Property type">
+        <button type="button" class:list={['chip', { 'is-on': !initial.category }]} data-filter-category="">
+          All <span>{listings.length}</span>
+        </button>
+        {
+          categories.map((c) => (
+            <button type="button" class:list={['chip', { 'is-on': initial.category === c.slug }]} data-filter-category={c.slug}>
+              {c.name} <span>{countFor(c.slug)}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="filters__right">
+        {
+          hasRentals && hasSales && (
+            <div class="seg" role="group" aria-label="Buy or rent">
+              {[
+                ['', 'Any'],
+                ['sale', 'Buy'],
+                ['rent', 'Rent'],
+              ].map(([v, label]) => (
+                <button type="button" class:list={{ 'is-on': initial.deal === v }} data-filter-deal={v}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )
+        }
+        <label class="filters__sort">
+          <span class="sr-only">Sort</span>
+          <select data-filter-sort>
+            <option value="newest" selected={initial.sort === 'newest'}>Newest</option>
+            <option value="price-asc" selected={initial.sort === 'price-asc'}>Price: low to high</option>
+            <option value="price-desc" selected={initial.sort === 'price-desc'}>Price: high to low</option>
+          </select>
+          <Icon name="lucide:chevrons-up-down" />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section listings">
+    {
+      featured.length > 0 && (
+        <section class="featured" data-featured>
+          <div class="featured__head">
+            <span class="eyebrow">Hand-picked</span>
+            <h2 class="heading">{page.featuredTitle}</h2>
+          </div>
+          <div class="featured__list">
+            {featured.map((l, i) => (
+              <ListingSpotlight listing={l} reverse={i % 2 === 1} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="all-heading">
+      <div class="results-head">
+        <h2 id="all-heading" class="heading">All Properties</h2>
+        <p class="results-count" aria-live="polite"><strong data-count>{listings.length}</strong> <span data-count-word>{listings.length === 1 ? 'property' : 'properties'}</span></p>
+      </div>
+
+      <div class="grid" data-grid>
+        {
+          listings.map((l, i) => (
+            <div class="grid__item" data-item data-price={l.price} data-order={l.order} style={`--reveal-delay:${(i % 3) * 0.08}s`} data-reveal>
+              <ListingCard listing={l} priority={i < 3} />
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="empty" data-empty hidden>
+        <Icon name="lucide:search-x" />
+        <p>{page.emptyText}</p>
+        <button type="button" class="btn btn-outline" data-reset>Clear filters</button>
+      </div>
+    </section>
+
+    <div class="spacer"></div>
+
+    <CtaBand
+      eyebrow="Can't find it?"
+      title="Tell us what you're looking for"
+      text="Not every property makes it online. Share your budget and the area you have in mind and we'll match you with options."
+      primary={{ label: 'Speak to Agent', action: 'call' }}
+      secondary={{ label: 'WhatsApp Us', action: 'whatsapp' }}
+      settings={settings}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .stats {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stats li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .stats strong {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--gold);
+    letter-spacing: 0;
+  }
+
+  /* --- Filter bar: sticks under the nav while scrolling the grid --- */
+  .filters {
+    position: sticky;
+    top: 70px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 8px 24px rgba(15, 43, 70, 0.06);
+  }
+  .filters__inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .filters__search {
+    flex: 1 1 260px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 48px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    transition:
+      border-color 0.3s,
+      background 0.3s;
+  }
+  .filters__search:focus-within {
+    border-color: var(--gold);
+    background: var(--white);
+  }
+  .filters__search svg {
+    width: 18px;
+    height: 18px;
+    color: var(--faint);
+    flex: none;
+  }
+  .filters__search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    color: var(--text);
+  }
+  .filters__chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--navy);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      color 0.25s,
+      border-color 0.25s;
+  }
+  .chip span {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+  .chip:hover {
+    border-color: var(--navy);
+  }
+  .chip.is-on {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .chip.is-on span {
+    background: var(--gold);
+    color: var(--white);
+  }
+  .filters__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
+  .seg {
+    display: flex;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+  }
+  .seg button {
+    height: 34px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      color 0.25s;
+  }
+  .seg button.is-on {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: var(--shadow-sm);
+  }
+  .filters__sort {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .filters__sort select {
+    appearance: none;
+    height: 42px;
+    padding: 0 38px 0 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--navy);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filters__sort svg {
+    position: absolute;
+    right: 12px;
+    width: 16px;
+    height: 16px;
+    color: var(--faint);
+    pointer-events: none;
+  }
+  @media (max-width: 960px) {
+    .filters {
+      top: 68px;
+    }
+    .filters__chips {
+      order: 3;
+      width: 100%;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filters__chips::-webkit-scrollbar {
+      display: none;
+    }
+    .chip {
+      flex: none;
+    }
+    .filters__right {
+      margin-left: 0;
+    }
+  }
+  @media (max-width: 600px) {
+    .filters__inner {
+      gap: 10px;
+    }
+    .filters__right {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .filters__sort {
+      flex: 1;
+      min-width: 0;
+    }
+    .filters__sort select {
+      width: 100%;
+    }
+  }
+
+  /* --- Content --- */
+  .featured {
+    margin-bottom: clamp(56px, 8vw, 90px);
+  }
+  .featured__head {
+    margin-bottom: 28px;
+  }
+  .featured__head .heading {
+    margin-top: 8px;
+  }
+  .featured__list {
+    display: grid;
+    gap: 32px;
+  }
+  .listings.is-filtering .featured {
+    display: none;
+  }
+
+  .results-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding-bottom: 18px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .results-count {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .results-count strong {
+    color: var(--navy);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+  }
+  .grid__item[hidden] {
+    display: none;
+  }
+  @media (max-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+  }
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    padding: 64px 24px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+  }
+  .empty[hidden] {
+    display: none;
+  }
+  .empty svg {
+    width: 40px;
+    height: 40px;
+    color: var(--gold);
+  }
+  .spacer {
+    height: clamp(56px, 8vw, 100px);
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.listings')!
+  const items = [...document.querySelectorAll<HTMLElement>('[data-item]')]
+  const grid = document.querySelector<HTMLElement>('[data-grid]')!
+  const empty = document.querySelector<HTMLElement>('[data-empty]')!
+  const count = document.querySelector<HTMLElement>('[data-count]')!
+  const countWord = document.querySelector<HTMLElement>('[data-count-word]')!
+  const q = document.querySelector<HTMLInputElement>('[data-filter-q]')!
+  const sortSel = document.querySelector<HTMLSelectElement>('[data-filter-sort]')!
+  const catBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-category]')]
+  const dealBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-deal]')]
+
+  const params = new URLSearchParams(location.search)
+  const state = {
+    q: params.get('q') ?? '',
+    category: params.get('category') ?? '',
+    deal: params.get('deal') ?? '',
+    sort: params.get('sort') ?? 'newest',
+  }
+
+  function apply() {
+    const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean)
+    let shown = 0
+    for (const item of items) {
+      const card = item.firstElementChild as HTMLElement
+      const ok =
+        (!state.category || card.dataset.category === state.category) &&
+        (!state.deal || card.dataset.deal === state.deal) &&
+        terms.every((t) => (card.dataset.search ?? '').includes(t))
+      item.hidden = !ok
+      if (ok) {
+        shown++
+        item.classList.add('is-revealed')
+      }
+    }
+
+    const sorted = [...items].sort((a, b) => {
+      if (state.sort === 'price-asc') return Number(a.dataset.price) - Number(b.dataset.price)
+      if (state.sort === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price)
+      return Number(b.dataset.order) - Number(a.dataset.order)
+    })
+    sorted.forEach((el) => grid.appendChild(el))
+
+    count.textContent = String(shown)
+    countWord.textContent = shown === 1 ? 'property' : 'properties'
+    empty.hidden = shown > 0
+    root.classList.toggle('is-filtering', Boolean(state.q || state.category || state.deal))
+    catBtns.forEach((b) => b.classList.toggle('is-on', b.dataset.filterCategory === state.category))
+    dealBtns.forEach((b) => b.classList.toggle('is-on', b.dataset.filterDeal === state.deal))
+
+    const next = new URLSearchParams()
+    if (state.q) next.set('q', state.q)
+    if (state.category) next.set('category', state.category)
+    if (state.deal) next.set('deal', state.deal)
+    if (state.sort !== 'newest') next.set('sort', state.sort)
+    const qs = next.toString()
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname)
+  }
+
+  q.addEventListener('input', () => {
+    state.q = q.value.trim()
+    apply()
+  })
+  sortSel.addEventListener('change', () => {
+    state.sort = sortSel.value
+    apply()
+  })
+  catBtns.forEach((b) =>
+    b.addEventListener('click', () => {
+      state.category = b.dataset.filterCategory ?? ''
+      apply()
+    }),
+  )
+  dealBtns.forEach((b) =>
+    b.addEventListener('click', () => {
+      state.deal = b.dataset.filterDeal ?? ''
+      apply()
+    }),
+  )
+  document.querySelector('[data-reset]')?.addEventListener('click', () => {
+    Object.assign(state, { q: '', category: '', deal: '' })
+    q.value = ''
+    apply()
+  })
+
+  apply()
+</script>
