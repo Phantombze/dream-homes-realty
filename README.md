@@ -1,137 +1,60 @@
 # Dream Homes Realty
 
-A modern, responsive real estate website for Dream Homes Realty - a Belize-based property company.
+The website for Dream Homes Realty, Ladyville, Belize — <https://www.dreamhomes-realty.com>.
 
-## 🏡 About
+Astro, rendered on the server per request, with every page's content edited in the shared Payload CMS at
+<https://cp.panelbz.cloud> (tenant `dreamhomes`). A save in Payload is on the site on the next page view.
 
-Dream Homes Realty helps clients find, buy, sell, and rent quality properties throughout Belize with integrity, local expertise, and personalized guidance.
-
-## 🚀 Features
-
-- **Property Listings** - Browse available properties with detailed information
-- **Search & Filters** - Find properties by location, price, category
-- **Individual Property Pages** - Detailed property views with image galleries
-- **Responsive Design** - Mobile-friendly across all devices
-- **Admin Panel** - Manage listings, settings, and content
-- **SEO Optimized** - Structured data, meta tags, sitemap
-- **Community Focus** - Showcase of community support initiatives
-
-## 🛠️ Tech Stack
-
-- **Frontend:** HTML5, CSS3 (Custom), Vanilla JavaScript
-- **Backend:** PHP 7.4+
-- **Database:** MySQL/MariaDB
-- **Deployment:** Apache/Nginx
-
-## 📁 Project Structure
+The previous PHP + MySQL site is in this repository's history: the commit "Bring in the PHP site as it was deployed
+on the server" is its last working version.
 
 ```
-Dream Homes/
-├── assets/
-│   ├── css/
-│   │   ├── site.css           # Main stylesheet (source)
-│   │   ├── site.min.css       # Minified for production
-│   │   └── admin.css          # Admin panel styles
-│   ├── js/                    # JavaScript files
-│   └── img/                   # Images & media
-├── admin/                     # Admin panel
-├── includes/                  # PHP includes (header, footer)
-├── index.php                  # Homepage
-├── listings.php               # Property listings page
-├── listing.php                # Individual property page
-├── about.php                  # About page
-├── contact.php                # Contact page
-├── config.php                 # Configuration
-└── build.sh                   # Build script for minification
+web/                Astro site (Node, @astrojs/node standalone)
+  src/pages/        home, listings, listings/[slug], about, contact, 404, sitemap.xml, robots.txt,
+                    media/[...file] (Payload image proxy), api/revalidate (cache clear), *.php.ts (old-URL redirects)
+  src/components/   Header, Footer, HeroSlider, ListingCard, ListingSpotlight, ListingGallery, AgentCard, …
+  src/lib/cms.ts    Payload reads: tenant-scoped, cached, falls back to src/data/ if the CMS is down
+  src/lib/content.ts  CMS documents → the shapes components render (images, prices, listings)
+  src/data/*.json   Fallback copy of all content; also what the CMS seed loads
+  public/images/seed/ The old site's photos, optimised; seeded into Payload's Media
+scripts/            One-off migration from the old MySQL database
 ```
 
-## 🔧 Development Setup
+## Run locally
 
-### Prerequisites
-- PHP 7.4 or higher
-- MySQL/MariaDB
-- Web server (Apache/Nginx/XAMPP/WAMP)
+```bash
+cd web
+npm install
+npm run dev          # http://127.0.0.1:4330
+```
 
-### Local Installation
+With no CMS running the site renders from `src/data/` and logs one `[cms]` warning per resource. To work against a
+local CMS, run the CMS (see the CMS repository's README) and set `PAYLOAD_API_URL` in `web/.env`
+(copy `web/.env.example`).
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/PhantomBze/dream-homes.git
-   cd dream-homes
-   ```
+## How content gets to the page
 
-2. **Configure environment:**
-   - Copy `config.php` and update settings
-   - Set `ENVIRONMENT` to `development`
+1. A visitor requests `/listings/`.
+2. `src/lib/cms.ts` asks Payload (`127.0.0.1:3100` on the server) for this tenant's listings, unless it asked within
+   the last 60 seconds.
+3. Payload calls `POST /api/revalidate/` after every save, which empties that cache, so edits show immediately.
+4. If Payload is down, the last good answer is served; if there has never been one, `src/data/` is.
 
-3. **Database setup:**
-   - Import database schema (if applicable)
-   - Update database credentials in `config.php`
+Images uploaded in Payload are served at `/media/<file>` by a small proxy (the CMS host is not public), with
+year-long immutable caching so Cloudflare serves them after the first view.
 
-4. **Start local server:**
-   ```bash
-   # Using PHP built-in server
-   php -S localhost:8000
+## Old URLs
 
-   # Or use XAMPP/WAMP and place in htdocs
-   ```
+`/index.php`, `/listings.php?category=N`, `/listing.php?slug=X`, `/about.php`, `/contact.php` and `/sitemap.php`
+301 to their new addresses (`src/lib/legacy.ts`), so shared links and indexed pages keep working.
 
-5. **Access the site:**
-   - Frontend: `http://localhost:8000`
-   - Admin: `http://localhost:8000/admin`
+## Notes on the rebuild
 
-## 📦 Deployment
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
-
-**Quick deployment steps:**
-
-1. Build minified assets:
-   ```bash
-   bash build.sh
-   ```
-
-2. Upload to production server:
-   - All PHP files
-   - `assets/css/*.min.css` (minified CSS)
-   - `assets/img/` (images)
-   - `assets/js/` (scripts)
-
-3. Set environment on server:
-   ```apache
-   # In .htaccess
-   SetEnv ENVIRONMENT production
-   ```
-
-## 🎨 CSS Architecture
-
-- **Organized by sections** - Navigation, Hero, Listings, Cards, Forms, Footer
-- **CSS Variables** - Consistent colors, spacing, transitions
-- **Mobile-first** - Responsive breakpoints at 992px, 768px, 480px
-- **BEM-like naming** - `.dh-` prefix for all classes
-- **Table of contents** - Quick navigation in site.css
-
-## 🤝 Contributing
-
-This is a private project for Dream Homes Realty. For internal team members:
-
-1. Create a feature branch: `git checkout -b feature/your-feature`
-2. Make your changes and commit: `git commit -m 'Add feature'`
-3. Push to the branch: `git push origin feature/your-feature`
-4. Create a Pull Request
-
-## 📝 License
-
-© 2026 Dream Homes Realty. All rights reserved.
-
-## 📧 Contact
-
-**Dream Homes Realty**
-Belize
-
-- Website: dreamhomes-realty.com
-- Email: info@dreamhomes-realty.com
-
----
-
-Built with ❤️ for Belize real estate
+- Category names were tidied: "Appartments" → "Apartments", "Land Properties" → "Land". Footer links on the old
+  site pointed at the wrong categories (Homes → id 1, which was Land) and one that did not exist (id 4).
+- Prices are numbers in BZD with a Sale / Rent choice; "/ month" is added for rentals. The old data stored text like
+  `650 / Monthly`, and every listing page said "For Sale", including rentals.
+- The old listing pages had no description, only a generic paragraph shared by every property. Each listing now has
+  a short summary written strictly from its own data (rooms, amenities, land size), to be expanded in the CMS.
+- Hero and quote-band photos were hot-linked from Unsplash; they are now local files / CMS media.
+- The old settings table held an SMTP password in plain text. It was not carried over.
