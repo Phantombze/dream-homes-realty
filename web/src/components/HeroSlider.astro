@@ -26,6 +26,11 @@ interface Props {
 
 const { slides, seconds, searchPlaceholder, socials } = Astro.props
 const count = Math.max(slides.length, 1)
+
+// A line break typed in the title is kept, so the heading wraps exactly where
+// the editor chose instead of re-wrapping when the web font finishes loading.
+const escape = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const lines = (t: string) => escape(t ?? '').split(/\r?\n/).join('<br />')
 ---
 
 <section class="hero" data-hero data-interval={seconds * 1000} aria-roledescription="carousel" aria-label="Featured">
@@ -50,11 +55,11 @@ const count = Math.max(slides.length, 1)
             <span class="hero__tag">{s.eyebrow}</span>
             {i === 0 ? (
               <h1 class="hero__title">
-                {s.title} <span>{s.highlight}</span>
+                <Fragment set:html={lines(s.title)} /> <span>{s.highlight}</span>
               </h1>
             ) : (
               <p class="hero__title" role="heading" aria-level="2">
-                {s.title} <span>{s.highlight}</span>
+                <Fragment set:html={lines(s.title)} /> <span>{s.highlight}</span>
               </p>
             )}
             <p class="hero__text">{s.text}</p>
@@ -164,7 +169,7 @@ const count = Math.max(slides.length, 1)
     font-weight: 700;
     font-size: clamp(2.8rem, 7vw, 5.6rem);
     line-height: 1.08;
-    max-width: 12ch;
+    max-width: 900px;
     margin-bottom: 24px;
   }
   .hero__title span {

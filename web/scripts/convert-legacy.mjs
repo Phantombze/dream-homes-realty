@@ -203,21 +203,21 @@ const homePage = {
   heroSlides: [
     {
       eyebrow: 'Exclusively Belize',
-      title: 'Find Your Piece of',
+      title: 'Find Your Piece\nof',
       highlight: 'Paradise.',
       text: 'Discover the most prestigious properties in Belize, from private island estates to modern beachfront villas.',
       image: media('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1920&q=80', 'Bright open-plan living room'),
     },
     {
       eyebrow: 'Luxury Living',
-      title: 'Modern Design Meets',
+      title: 'Modern Design\nMeets',
       highlight: 'Island Soul.',
       text: 'Experience architectural excellence designed to blend seamlessly with the natural beauty of the Caribbean coast.',
       image: media('https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1920&q=80', 'Modern villa with a pool'),
     },
     {
       eyebrow: 'Investment Opportunity',
-      title: 'Secure Your',
+      title: 'Secure Your\n',
       highlight: 'Future Today.',
       text: "Belize is one of the fastest-growing markets in the region. Don't wait — contact us today.",
       image: media('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80', 'Contemporary home at dusk'),
