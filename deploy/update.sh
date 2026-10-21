@@ -99,5 +99,17 @@ else
   ok "site code unchanged — no rebuild"
 fi
 
+# ---------------------------------------------------------------------------
+say "Service and routing"
+# ---------------------------------------------------------------------------
+if ! cmp -s "$SITE/deploy/dreamhomes-web.service" /etc/systemd/system/dreamhomes-web.service; then
+  install -m 0644 "$SITE/deploy/dreamhomes-web.service" /etc/systemd/system/dreamhomes-web.service
+  systemctl daemon-reload
+  systemctl restart dreamhomes-web
+  for i in $(seq 1 20); do curl -fsS -o /dev/null http://127.0.0.1:4330/ && break; sleep 1; done
+  ok "service unit updated and restarted"
+fi
+SITE=$SITE bash "$SITE/deploy/caddy-switch.sh"
+
 say "Done"
 curl -s -o /dev/null -w "   https://www.dreamhomes-realty.com/  →  %{http_code}\n" https://www.dreamhomes-realty.com/

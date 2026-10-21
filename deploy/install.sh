@@ -168,28 +168,7 @@ grep -q '^BREVO_API_KEY=xkeysib-' /etc/site-contact/contact.env \
 # ---------------------------------------------------------------------------
 say "8. Point Caddy at it (replaces the holding page)"
 # ---------------------------------------------------------------------------
-if grep -q 'reverse_proxy 127.0.0.1:4330' "$CADDYFILE"; then
-  ok "Caddy already routes the site"
-else
-  cp "$CADDYFILE" "$CADDYFILE.bak-$(date +%Y%m%d-%H%M%S)"
-  python3 - "$CADDYFILE" "$SITE/deploy/dreamhomes.caddy" <<'PY'
-import re, sys
-path, block = sys.argv[1], open(sys.argv[2]).read()
-text = open(path).read()
-# The holding-page section: from its comment banner up to the next banner.
-pattern = re.compile(r"# -+\n# dreamhomes-realty\.com.*?(?=\n# -+\n# cp\.panelbz\.cloud)", re.S)
-if not pattern.search(text):
-    sys.exit("holding-page block not found; edit the Caddyfile by hand")
-open(path, "w").write(pattern.sub(block.rstrip() + "\n", text, count=1))
-PY
-  if caddy validate --config "$CADDYFILE" --adapter caddyfile >/dev/null 2>&1 && systemctl reload caddy; then
-    ok "Caddy reloaded — www.dreamhomes-realty.com now serves the new site"
-  else
-    cp "$(ls -1t "$CADDYFILE".bak-* | head -1)" "$CADDYFILE"
-    systemctl reload caddy || true
-    die "Caddy rejected the new config — restored the previous Caddyfile, holding page still up"
-  fi
-fi
+SITE=$SITE bash "$SITE/deploy/caddy-switch.sh"
 
 # ---------------------------------------------------------------------------
 say "Done"

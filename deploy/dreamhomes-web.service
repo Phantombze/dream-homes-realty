@@ -3,6 +3,8 @@ Description=Dream Homes Realty website (Astro, rendered per request)
 Documentation=file:///srv/src/dreamhomes/README.md
 After=network-online.target payload-cms.service
 Wants=network-online.target payload-cms.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=simple
@@ -25,8 +27,6 @@ ExecStart=/usr/bin/node /srv/src/dreamhomes/web/dist/server/entry.mjs
 
 Restart=always
 RestartSec=3
-StartLimitIntervalSec=60
-StartLimitBurst=5
 
 # The box has ~2 GB shared with MongoDB and Payload. The site needs ~80 MB;
 # this ceiling keeps a runaway render from taking the CMS down with it.
@@ -53,7 +53,9 @@ RestrictNamespaces=true
 RestrictRealtime=true
 RestrictSUIDSGID=true
 LockPersonality=true
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# AF_NETLINK: Node lists the network interfaces when it logs its address at
+# startup; without it, that throws "uv_interface_addresses … error 97".
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
 SystemCallArchitectures=native
 
 StandardOutput=journal
