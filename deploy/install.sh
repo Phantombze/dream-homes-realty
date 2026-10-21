@@ -121,6 +121,7 @@ npm run build 2>&1 | tail -4 || die "site build failed — nothing changed on th
 chown -R medmat:dreamhomes "$SITE"; chmod -R g+rX "$SITE"
 # Caddy serves /_astro/* straight from disk, so those files must be readable to it.
 chmod -R o+rX "$WEB/dist/client"
+git -c safe.directory="$SITE" -C "$SITE" rev-parse HEAD > "$WEB/dist/.built-from"   # update.sh rebuilds when this differs
 ok "built to $WEB/dist"
 
 # ---------------------------------------------------------------------------

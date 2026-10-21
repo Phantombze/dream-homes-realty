@@ -35,12 +35,19 @@ export NODE_OPTIONS=--max-old-space-size=900
 # ---------------------------------------------------------------------------
 say "Site code"
 # ---------------------------------------------------------------------------
-before=$(as_owner git -C "$SITE" rev-parse HEAD)
 as_owner git -C "$SITE" pull -q --ff-only origin main
 after=$(as_owner git -C "$SITE" rev-parse HEAD)
 ok "$(as_owner git -C "$SITE" log --oneline -1)"
+# Compare with the commit the running build was made from (recorded at build
+# time), not with what was checked out before this pull: a manual `git pull`
+# beforehand would otherwise hide the change and skip the rebuild.
+built=$(cat "$WEB/dist/.built-from" 2>/dev/null || echo none)
 site_changed=0
-[[ $before != "$after" ]] && ! as_owner git -C "$SITE" diff --quiet "$before" "$after" -- web/ ':!web/src/data' ':!web/public/images/seed' ':!web/scripts' && site_changed=1
+if [[ $built == none ]] || ! as_owner git -C "$SITE" cat-file -e "$built^{commit}" 2>/dev/null; then
+  site_changed=1
+elif [[ $built != "$after" ]] && ! as_owner git -C "$SITE" diff --quiet "$built" "$after" -- web/ ':!web/src/data' ':!web/public/images/seed' ':!web/scripts'; then
+  site_changed=1
+fi
 
 # ---------------------------------------------------------------------------
 say "CMS code"
@@ -91,6 +98,7 @@ if (( site_changed )); then
   cd "$WEB"
   npm ci --include=dev --no-audit --no-fund 2>&1 | tail -1
   npm run build 2>&1 | tail -2 || die "site build failed — the running site is untouched"
+  echo "$after" > "$WEB/dist/.built-from"
   chown -R medmat:dreamhomes "$SITE"; chmod -R g+rX "$SITE"; chmod -R o+rX "$WEB/dist/client"
   systemctl restart dreamhomes-web
   for i in $(seq 1 20); do curl -fsS -o /dev/null http://127.0.0.1:4330/ && break; sleep 1; done
