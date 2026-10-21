@@ -5,6 +5,7 @@
  * "Featured" on.
  */
 import { Icon } from 'astro-icon/components'
+import FeaturedBadge from './FeaturedBadge.astro'
 import type { Listing } from '../lib/content'
 
 interface Props {
@@ -27,7 +28,7 @@ const thumbs = l.gallery.slice(1, 4)
         </div>
       )
     }
-    <span class="spot__flag"><Icon name="lucide:star" /> Featured</span>
+    <span class="spot__flag"><FeaturedBadge /></span>
   </a>
 
   <div class="spot__body">
@@ -122,21 +123,7 @@ const thumbs = l.gallery.slice(1, 4)
     position: absolute;
     top: 20px;
     left: 20px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: var(--white);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .spot__flag svg {
-    width: 13px;
-    height: 13px;
+    z-index: 1;
   }
 
   .spot__body {

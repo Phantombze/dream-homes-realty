@@ -4,10 +4,9 @@ import type { Category } from '../lib/content'
 
 interface Props {
   category: Category
-  count: number
 }
 
-const { category: c, count } = Astro.props
+const { category: c } = Astro.props
 ---
 
 <a class="cat" href={`/listings/?category=${c.slug}`}>
@@ -15,7 +14,7 @@ const { category: c, count } = Astro.props
   <div class="cat__panel">
     <h3>{c.name}</h3>
     <div class="cat__meta">
-      <span>{count} {count === 1 ? 'Listing' : 'Listings'}</span>
+      <span>View Collection</span>
       <Icon name="lucide:arrow-right" />
     </div>
   </div>

@@ -173,9 +173,13 @@ export function toListing(doc: any, lookups: { categories: Category[]; locations
     lookups.locations.find((l) => l.slug === locSlug) ??
     null
 
-  const gallery = (doc.gallery ?? [])
+  const photos = (doc.gallery ?? [])
     .map((g: any, i: number) => toImage(g?.image ?? g, `${doc.title}, photo ${i + 1}`))
     .filter(Boolean) as Image[]
+  // The chosen card photo leads the gallery too, so the page opens on the
+  // same picture as the card; without one, the first photo is the cover.
+  const chosen = toImage(doc.cover, doc.title)
+  const gallery = chosen ? [chosen, ...photos.filter((p) => p.src !== chosen.src)] : photos
 
   const facts: Listing['facts'] = []
   if (doc.bedrooms) facts.push({ icon: 'bed-double', value: String(doc.bedrooms), label: plural(doc.bedrooms, 'Bed') })

@@ -16,7 +16,6 @@ const [home, settings, listings, { categories, agents }] = await Promise.all([ge
 const slides = (home.heroSlides ?? []).map((s: any) => ({ ...s, image: toImage(s.image, s.title) }))
 
 const shown = (home.listings?.show === 'featured' ? listings.filter((l) => l.featured) : listings).slice(0, home.listings?.limit ?? 8)
-const countFor = (slug: string) => listings.filter((l) => l.category?.slug === slug).length
 const agentSlug = typeof home.quote?.agent === 'object' ? home.quote?.agent?.slug : home.quote?.agent
 const quoteAgent = agents.find((a) => a.slug === agentSlug) ?? agents[0] ?? null
 ---
@@ -50,7 +49,7 @@ const quoteAgent = agents.find((a) => a.slug === agentSlug) ?? agents[0] ?? null
       {
         categories.map((c, i) => (
           <div data-reveal style={`--reveal-delay:${i * 0.1}s`}>
-            <CategoryCard category={c} count={countFor(c.slug)} />
+            <CategoryCard category={c} />
           </div>
         ))
       }

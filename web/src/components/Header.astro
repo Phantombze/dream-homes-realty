@@ -104,6 +104,11 @@ const wa = whatsappHref(settings.whatsapp, 'Hi Dream Homes, I found you on your 
       box-shadow 0.4s var(--ease),
       backdrop-filter 0.4s;
   }
+  /* No animation until the page has loaded (see the script). */
+  .nav:not(.is-ready),
+  .nav:not(.is-ready) * {
+    transition: none !important;
+  }
   /* A soft shade behind the transparent nav keeps it legible on bright photos. */
   .nav--over-hero::before {
     content: '';
@@ -363,11 +368,21 @@ const wa = whatsappHref(settings.whatsapp, 'Hi Dream Homes, I found you on your 
   const drawer = document.querySelector<HTMLElement>('[data-nav-drawer]')!
 
   // Over a hero, go solid once the visitor has scrolled past the top.
-  if (nav.classList.contains('nav--over-hero')) {
-    const update = () => nav.classList.toggle('is-solid', window.scrollY > 40 || drawer.classList.contains('is-open'))
-    update()
-    window.addEventListener('scroll', update, { passive: true })
+  const update = () => {
+    if (nav.classList.contains('nav--over-hero')) nav.classList.toggle('is-solid', window.scrollY > 40 || drawer.classList.contains('is-open'))
   }
+  update()
+  window.addEventListener('scroll', update, { passive: true })
+
+  // The nav animates only once the page is up. A reload partway down the page
+  // restores the scroll position after load; without this the nav visibly
+  // shrank from its tall to its compact size as the page appeared.
+  const ready = () => {
+    update()
+    requestAnimationFrame(() => requestAnimationFrame(() => nav.classList.add('is-ready')))
+  }
+  if (document.readyState === 'complete') ready()
+  else window.addEventListener('load', ready, { once: true })
 
   const setOpen = (open: boolean) => {
     drawer.hidden = false

@@ -106,6 +106,12 @@ const summaries = {
   'new-vista-home-for-sale': 'Newly built three-bedroom, two-bathroom home in Vista Del Mar, Ladyville.',
 }
 
+// Card photos where the first photo is not the best one: this listing's
+// first photo is an empty room; the kitchen sells it better.
+const covers = {
+  'vista-home-for-sale': img('/images/seed/vista-home-for-sale-02.webp', 'Vista Del Mar home, kitchen'),
+}
+
 const listings = legacy.listings.map((l) => {
   const rent = /month/i.test(l.price)
   const price = Number(String(l.price).replace(/[^\d.]/g, ''))
@@ -140,6 +146,7 @@ const listings = legacy.listings.map((l) => {
     highlights: stats.highlights,
     amenities,
     gallery,
+    cover: covers[l.slug] ?? null,
     videoUrl: l.video_url || '',
     mapLocation: coords,
     agent: 'dean-sosa',

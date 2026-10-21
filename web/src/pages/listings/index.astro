@@ -25,19 +25,13 @@ const initial = {
 }
 
 const featured = listings.filter((l) => l.featured && l.status === 'available').slice(0, 2)
-const countFor = (slug: string) => listings.filter((l) => l.category?.slug === slug).length
 const hasRentals = listings.some((l) => l.deal === 'rent')
 const hasSales = listings.some((l) => l.deal === 'sale')
 const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
 ---
 
 <BaseLayout active="listings" overHero title={page.seo?.title || 'Listings'} description={page.seo?.description}>
-  <PageHero eyebrow={page.eyebrow} title={page.title} text={page.intro} image={heroImage} crumbs={[{ label: 'Listings' }]}>
-    <ul class="stats">
-      <li><strong>{listings.filter((l) => l.status === 'available').length}</strong> Available now</li>
-      {categories.map((c) => <li><strong>{countFor(c.slug)}</strong> {c.name}</li>)}
-    </ul>
-  </PageHero>
+  <PageHero eyebrow={page.eyebrow} title={page.title} text={page.intro} image={heroImage} crumbs={[{ label: 'Listings' }]} />
 
   <div class="filters" data-filters>
     <div class="container filters__inner">
@@ -49,12 +43,12 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
 
       <div class="filters__chips" role="group" aria-label="Property type">
         <button type="button" class:list={['chip', { 'is-on': !initial.category }]} data-filter-category="">
-          All <span>{listings.length}</span>
+          All
         </button>
         {
           categories.map((c) => (
             <button type="button" class:list={['chip', { 'is-on': initial.category === c.slug }]} data-filter-category={c.slug}>
-              {c.name} <span>{countFor(c.slug)}</span>
+              {c.name}
             </button>
           ))
         }
@@ -109,7 +103,7 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
     <section aria-labelledby="all-heading">
       <div class="results-head">
         <h2 id="all-heading" class="heading">All Properties</h2>
-        <p class="results-count" aria-live="polite"><strong data-count>{listings.length}</strong> <span data-count-word>{listings.length === 1 ? 'property' : 'properties'}</span></p>
+        <p class="sr-only" aria-live="polite"><span data-count>{listings.length}</span> <span data-count-word>{listings.length === 1 ? 'property' : 'properties'}</span> shown</p>
       </div>
 
       <div class="grid" data-grid>
@@ -145,35 +139,6 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
 </BaseLayout>
 
 <style>
-  .stats {
-    list-style: none;
-    margin: 28px 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .stats li {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  .stats strong {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 0;
-  }
-
   /* --- Filter bar: sticks under the nav while scrolling the grid --- */
   .filters {
     position: sticky;
@@ -248,27 +213,12 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
       color 0.25s,
       border-color 0.25s;
   }
-  .chip span {
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    background: var(--bg);
-    color: var(--muted);
-    font-size: 0.72rem;
-  }
   .chip:hover {
     border-color: var(--navy);
   }
   .chip.is-on {
     background: var(--navy);
     border-color: var(--navy);
-    color: var(--white);
-  }
-  .chip.is-on span {
-    background: var(--gold);
     color: var(--white);
   }
   .filters__right {
@@ -396,13 +346,6 @@ const heroImage = featured[0]?.cover ?? listings[0]?.cover ?? null
   }
   #all-heading {
     scroll-margin-top: 160px;
-  }
-  .results-count {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .results-count strong {
-    color: var(--navy);
   }
   .grid {
     display: grid;

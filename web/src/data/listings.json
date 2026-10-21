@@ -80,6 +80,7 @@
         "alt": "Apartments- Single Room, photo 10"
       }
     ],
+    "cover": null,
     "videoUrl": "",
     "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
     "agent": "dean-sosa",
@@ -146,6 +147,7 @@
         "alt": "Apartments - Double Room, photo 5"
       }
     ],
+    "cover": null,
     "videoUrl": "",
     "mapLocation": "17°32'56.1\"N 88°17'21.4\"W",
     "agent": "dean-sosa",
@@ -201,6 +203,7 @@
         "alt": "Tubal - 1 Acre Land, photo 5"
       }
     ],
+    "cover": null,
     "videoUrl": "",
     "mapLocation": "17°33'26.1\"N 88°18'48.2\"W",
     "agent": "dean-sosa",
@@ -248,6 +251,7 @@
         "alt": "17.4 Acres of Land - San Pablo, photo 3"
       }
     ],
+    "cover": null,
     "videoUrl": "",
     "mapLocation": "18.22272, -88.54784",
     "agent": "dean-sosa",
@@ -314,6 +318,10 @@
         "alt": "Vista Del Mar - Home, photo 4"
       }
     ],
+    "cover": {
+      "src": "/images/seed/vista-home-for-sale-02.webp",
+      "alt": "Vista Del Mar home, kitchen"
+    },
     "videoUrl": "",
     "mapLocation": "17°33'16.6\"N 88°17'13.2\"W",
     "agent": "dean-sosa",
@@ -359,6 +367,7 @@
         "alt": "Vista Del Mar - Home, photo 4"
       }
     ],
+    "cover": null,
     "videoUrl": "",
     "mapLocation": "17°33'16.5\"N 88°17'13.7\"W",
     "agent": "dean-sosa",

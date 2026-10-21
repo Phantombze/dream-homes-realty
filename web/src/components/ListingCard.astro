@@ -4,6 +4,7 @@
  * and "similar properties" on a listing page.
  */
 import { Icon } from 'astro-icon/components'
+import FeaturedBadge from './FeaturedBadge.astro'
 import type { Listing } from '../lib/content'
 
 interface Props {
@@ -40,6 +41,13 @@ const unavailable = l.status !== 'available'
       {unavailable ? <span class="tag tag--status">{l.statusLabel}</span> : <span class="tag tag--deal">{l.dealLabel}</span>}
       {l.badge && <span class:list={['tag', l.badge.style === 'gold' ? 'tag--gold' : 'tag--navy']}>{l.badge.text}</span>}
     </div>
+    {
+      l.featured && !unavailable && (
+        <span class="card__featured">
+          <FeaturedBadge size="sm" />
+        </span>
+      )
+    }
     {
       l.gallery.length > 1 && (
         <span class="card__count">
@@ -178,6 +186,17 @@ const unavailable = l.status !== 'available'
     background: #b23b3b;
   }
 
+  .card__featured {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    z-index: 2;
+    transition: opacity 0.3s;
+  }
+  /* Makes room for the "View Property" button on hover. */
+  .card:hover .card__featured {
+    opacity: 0;
+  }
   .card__count {
     position: absolute;
     top: 14px;

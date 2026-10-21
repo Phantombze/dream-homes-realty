@@ -1,5 +1,9 @@
 ---
 import '../styles/global.css'
+// Preloaded so the headings render in Playfair from the first paint, instead
+// of drawing in the fallback font and visibly settling when Playfair arrives.
+import playfairUrl from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url'
+import montserratUrl from '@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2?url'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import BackToTop from '../components/BackToTop.astro'
@@ -52,6 +56,8 @@ const organization = {
     <link rel="canonical" href={canonical} />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
     <meta name="theme-color" content="#0a1f33" />
+    <link rel="preload" href={playfairUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={montserratUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
