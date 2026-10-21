@@ -384,8 +384,29 @@ const schema = {
     margin-top: 16px;
     color: var(--muted);
   }
-  .prose :global(p + p) {
+  /* Rich text from the CMS: headings, paragraphs and lists. */
+  .prose :global(p + p),
+  .prose :global(ul + p),
+  .prose :global(p + ul) {
     margin-top: 1em;
+  }
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4) {
+    margin: 1.8em 0 0.6em;
+    color: var(--navy);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: 6px;
+  }
+  .prose :global(li::marker) {
+    color: var(--gold-dark);
   }
   .highlights {
     list-style: none;

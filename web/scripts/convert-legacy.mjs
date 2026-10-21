@@ -46,6 +46,7 @@ const categories = Object.entries(categoryMeta).map(([id, c], i) => ({
 const locations = [
   { name: 'Ladyville', slug: 'ladyville', region: 'Belize District', order: 1 },
   { name: 'San Pablo', slug: 'san-pablo', region: 'Orange Walk District', order: 2 },
+  { name: 'San Pedro', slug: 'san-pedro', region: 'Belize District', order: 3 },
 ]
 const locationFor = (text) => (/san pablo/i.test(text) ? 'san-pablo' : 'ladyville')
 
@@ -319,6 +320,13 @@ const contactPage = {
   topics: ['Buying', 'Selling', 'Renting', 'Investing', 'General'],
   successMessage: 'Thank you — your message has been sent. We’ll be in touch shortly.',
   seo: { title: 'Contact', description: 'Call, WhatsApp or message Dream Homes Realty in Ladyville, Belize.' },
+}
+
+// Listings added since the old site, one file each in scripts/listings/, so
+// re-running this conversion never drops them.
+const extraDir = path.resolve(here, 'listings')
+for (const file of (await fs.readdir(extraDir).catch(() => [])).filter((f) => f.endsWith('.json')).sort()) {
+  listings.push(JSON.parse(await fs.readFile(path.join(extraDir, file), 'utf8')))
 }
 
 const write = (name, data) => fs.writeFile(path.join(DATA, `${name}.json`), JSON.stringify(data, null, 2) + '\n')

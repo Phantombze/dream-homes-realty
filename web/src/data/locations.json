@@ -10,5 +10,11 @@
     "slug": "san-pablo",
     "region": "Orange Walk District",
     "order": 2
+  },
+  {
+    "name": "San Pedro",
+    "slug": "san-pedro",
+    "region": "Belize District",
+    "order": 3
   }
 ]
