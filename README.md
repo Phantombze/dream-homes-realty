@@ -3,7 +3,8 @@
 The website for Dream Homes Realty, Ladyville, Belize — <https://www.dreamhomes-realty.com>.
 
 Astro, rendered on the server per request, with every page's content edited in the shared Payload CMS at
-<https://cp.panelbz.cloud> (tenant `dreamhomes`). A save in Payload is on the site on the next page view.
+<https://cp.panelbz.cloud> (tenant `dreamhomes`). The CMS is its own repository,
+[belize-sites-cms](https://github.com/Phantombze/belize-sites-cms) (private). A save in Payload is on the site on the next page view.
 
 The previous PHP + MySQL site is in this repository's history: the commit "Bring in the PHP site as it was deployed
 on the server" is its last working version.
@@ -51,26 +52,22 @@ also serves `/_astro/*` straight from disk and routes `/api/contact` to the shar
 
 | | |
 |---|---|
-| `deploy/bootstrap.sh` | First deploy: puts this repo in `/srv/src/dreamhomes` (from GitHub) and the CMS repo in `/srv/src/medinasmaterial` (from a git bundle copied up with scp, so no GitHub credentials live on the server), then runs `install.sh`. Stops if the CMS folder changed on the server since it was snapshotted. |
-| `deploy/install.sh` | Install / re-run to update. Backs up the CMS database, adds the revalidate secret to the CMS, rebuilds the CMS, seeds Dream Homes (missing items only), builds and starts the site, installs the contact service, swaps Caddy from the holding page (rolls back if Caddy rejects it). |
+| `deploy/bootstrap.sh` | Historical: the first deploy (2026-10-21), when the CMS lived inside the Medina's repository. Do not run it now. |
+| `deploy/install.sh` | Install / re-run to repair. Expects the CMS at `/srv/src/cms`. Backs up the CMS database, adds the revalidate secret to the CMS, rebuilds the CMS, seeds Dream Homes (missing items only), builds and starts the site, installs the contact service, swaps Caddy from the holding page (rolls back if Caddy rejects it). |
+| `deploy/update.sh` | Applies new code: pulls this repository from GitHub (it is public), runs the CMS's own update, loads new seed content, rebuilds the site only if it changed. |
+| `deploy/set-admin-login.sh` | Resets the CMS superadmin's email and password (the CMS cannot send reset emails). |
 | `deploy/set-contact-keys.sh` | Asks for the Brevo API key and Turnstile keys (hidden input) and stores them root-only. |
 | `deploy/dreamhomes-web.service` | systemd unit, sandboxed like `payload-cms`. |
 | `deploy/dreamhomes.caddy` | The Caddy block that replaces the holding page. |
 
-First deploy, from the laptop (PowerShell), in the CMS repository folder:
-
-```powershell
-git bundle create medinasmaterial.bundle main
-scp -i "$env:USERPROFILE\.ssh\medma@MedMat-private" medinasmaterial.bundle medmat@159.65.237.47:/tmp/
-```
-
-then on the server:
+Updating the site's code: push to GitHub, then on the server
 
 ```bash
-curl -fsSLo /tmp/bootstrap.sh https://raw.githubusercontent.com/Phantombze/dream-homes-realty/main/deploy/bootstrap.sh
-sudo bash /tmp/bootstrap.sh
-sudo bash /srv/src/dreamhomes/deploy/set-contact-keys.sh
+sudo bash /srv/src/dreamhomes/deploy/update.sh
 ```
+
+To update the CMS at the same time, copy its bundle up first (see the
+belize-sites-cms README); `update.sh` applies it.
 
 ### Contact form keys
 
@@ -80,8 +77,7 @@ holds the public Turnstile site key. `set-contact-keys.sh` writes both and resta
 the inboxes listed for `dreamhomes` in `/opt/site-contact/sites.json`; Brevo must have dreamhomes-realty.com
 verified as a sending domain.
 
-Updating the site's code later: `git pull` in `/srv/src/dreamhomes`, then `cd web && npm ci && npm run build &&
-sudo systemctl restart dreamhomes-web`. Content edits need nothing: they are live on save.
+Content edits need nothing: they are live on save.
 
 Editors: create a user in the CMS (role **User**, tenant **Dream Homes Realty**, role **Tenant editor**). They see only
 the Dream Homes sections; Medina's are hidden from them.

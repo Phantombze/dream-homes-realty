@@ -15,7 +15,7 @@ set -euo pipefail
 NEW_EMAIL=${1:-}
 [[ $NEW_EMAIL =~ ^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$ ]] || { echo "Usage: sudo bash $0 new@email.com"; exit 1; }
 
-CMS=/srv/src/medinasmaterial/cms
+CMS=/srv/src/cms
 [[ -f $CMS/src/payload.config.ts ]] || { echo "No CMS at $CMS"; exit 1; }
 
 read -rsp "New password (12+ characters): " P1; echo

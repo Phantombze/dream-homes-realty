@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 #
+#   HISTORICAL — the first deploy, 2026-10-21. It put the CMS in
+#   /srv/src/medinasmaterial, where it lived inside the Medina's repository.
+#   The CMS has since moved to its own repository and folder
+#   (github.com/Phantombze/belize-sites-cms at /srv/src/cms); do not run this
+#   on the current server. To set Dream Homes up on a new server: the CMS
+#   first (its README), then this repository at /srv/src/dreamhomes and
+#   deploy/install.sh.
+#
 #   First deployment of Dream Homes on the server: puts both code bases in
 #   place, then runs deploy/install.sh.
 #

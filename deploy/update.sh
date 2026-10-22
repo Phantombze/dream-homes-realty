@@ -7,9 +7,9 @@
 #
 #   1. Site: pulls github.com/Phantombze/dream-homes-realty. Rebuilds and
 #      restarts the site only if web/ changed.
-#   2. CMS: if /tmp/medinasmaterial.bundle is newer than the CMS checkout,
-#      updates it. Rebuilds and restarts Payload only if code the running CMS
-#      uses changed (seed scripts run straight from source and need nothing).
+#   2. CMS: runs the CMS's own update (/srv/src/cms/deploy/update.sh), which
+#      applies /tmp/belize-sites-cms.bundle if present and rebuilds Payload only
+#      if its code changed.
 #   3. Content: loads anything in web/src/data that the CMS does not have yet —
 #      new listings, locations, photos. Never overwrites edits made in the CMS.
 #
@@ -26,11 +26,12 @@ die()  { printf '   \033[31mFAIL\033[0m %s\n' "$*"; exit 1; }
 OWNER=medmat
 SITE=/srv/src/dreamhomes
 WEB=$SITE/web
-CMS_ROOT=/srv/src/medinasmaterial
-CMS=$CMS_ROOT/cms
-BUNDLE=/tmp/medinasmaterial.bundle
+CMS=/srv/src/cms
 as_owner() { sudo -u "$OWNER" -H "$@"; }
 export NODE_OPTIONS=--max-old-space-size=900
+
+grep -q "WorkingDirectory=$CMS\$" /etc/systemd/system/payload-cms.service \
+  || die "the CMS does not run from $CMS yet — move it first: deploy/migrate.sh in the belize-sites-cms repository"
 
 # ---------------------------------------------------------------------------
 say "Site code"
@@ -52,37 +53,10 @@ fi
 # ---------------------------------------------------------------------------
 say "CMS code"
 # ---------------------------------------------------------------------------
-cms_changed=0
-if [[ -f $BUNDLE && $BUNDLE -nt $CMS_ROOT/.git/HEAD ]]; then
-  chmod 644 "$BUNDLE"
-  as_owner git -C "$CMS_ROOT" bundle verify -q "$BUNDLE" >/dev/null 2>&1 || die "$BUNDLE is damaged — copy it again"
-  as_owner git -C "$CMS_ROOT" diff --quiet HEAD || die "uncommitted changes in $CMS_ROOT — see: git -C $CMS_ROOT status"
-  cbefore=$(as_owner git -C "$CMS_ROOT" rev-parse HEAD)
-  as_owner git -C "$CMS_ROOT" fetch -q "$BUNDLE" main:refs/remotes/bundle/main
-  as_owner git -C "$CMS_ROOT" merge -q --ff-only refs/remotes/bundle/main || die "the bundle is not a newer version of the CMS repository"
-  cafter=$(as_owner git -C "$CMS_ROOT" rev-parse HEAD)
-  [[ $cbefore != "$cafter" ]] && ! as_owner git -C "$CMS_ROOT" diff --quiet "$cbefore" "$cafter" -- cms/ ':!cms/src/seed' && cms_changed=1
-  ok "$(as_owner git -C "$CMS_ROOT" log --oneline -1)"
-else
-  ok "no newer bundle in /tmp — CMS code unchanged"
-fi
-
-# ---------------------------------------------------------------------------
-if (( cms_changed )); then
-  say "Rebuild the CMS (its code changed — a few minutes)"
-  systemctl start cms-backup.service && ok "database backed up"
-  cd "$CMS"
-  set -a; . /etc/payload-cms/payload.env; set +a
-  npm install --include=dev --no-audit --no-fund 2>&1 | tail -1
-  npm run generate:types 2>&1 | tail -1
-  npm run generate:importmap 2>&1 | tail -1
-  NODE_ENV=production npm run build 2>&1 | tail -4 || die "CMS build failed — the running CMS is untouched"
-  chown -R medmat:payload "$CMS"; chmod -R g+rX "$CMS"
-  chown -R payload:payload "$CMS/media" "$CMS/.next"; chmod -R g+rwX "$CMS/media" "$CMS/.next"
-  systemctl restart payload-cms
-  for i in $(seq 1 30); do curl -fsS -o /dev/null "http://127.0.0.1:3100/api/tenants?limit=1" && break; sleep 2; done
-  ok "payload-cms restarted"
-fi
+# The CMS is its own repository (github.com/Phantombze/belize-sites-cms) with
+# its own update script; it applies /tmp/belize-sites-cms.bundle if there is
+# one and rebuilds only if its code changed.
+bash "$CMS/deploy/update.sh"
 
 # ---------------------------------------------------------------------------
 say "New content (creates only what the CMS does not have)"

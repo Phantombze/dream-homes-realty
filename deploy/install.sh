@@ -5,8 +5,8 @@
 #
 #   Expects the code already on the server:
 #     /srv/src/dreamhomes        this repository (branch astro-payload or main)
-#     /srv/src/medinasmaterial   the CMS repository, updated to include the
-#                                Dream Homes collections
+#     /srv/src/cms               the CMS (github.com/Phantombze/belize-sites-cms),
+#                                which includes the Dream Homes collections
 #
 #   Run:  sudo bash /srv/src/dreamhomes/deploy/install.sh
 #
@@ -24,7 +24,7 @@ die()  { printf '   \033[31mFAIL\033[0m %s\n' "$*"; exit 1; }
 
 SITE=/srv/src/dreamhomes
 WEB=$SITE/web
-CMS=/srv/src/medinasmaterial/cms
+CMS=/srv/src/cms
 PAYLOAD_ENV=/etc/payload-cms/payload.env
 WEB_ENV=/etc/dreamhomes/web.env
 CADDYFILE=/etc/caddy/Caddyfile
@@ -143,7 +143,7 @@ say "7. Contact form service (Brevo + Turnstile)"
 # Only the shared service is installed here. The full kit in
 # ops/contact-forms/install.sh also changes Medina's and Parking Solutions'
 # forms and rebuilds those sites; run that separately when they are ready.
-KIT=/srv/src/medinasmaterial/ops/contact-forms/site-contact
+KIT=$CMS/ops/contact-forms/site-contact
 [[ -f $KIT/contact-server.mjs ]] || die "no contact service at $KIT — update the CMS repository"
 install -d -m 755 /opt/site-contact
 install -m 644 "$KIT/contact-core.mjs" "$KIT/contact-server.mjs" /opt/site-contact/
