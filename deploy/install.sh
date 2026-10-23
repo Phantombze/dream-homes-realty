@@ -133,7 +133,7 @@ systemctl enable --now dreamhomes-web >/dev/null 2>&1
 systemctl restart dreamhomes-web
 for i in $(seq 1 20); do curl -fsS -o /dev/null http://127.0.0.1:4330/ && break; sleep 1; done
 curl -fsS -o /dev/null http://127.0.0.1:4330/ || { journalctl -u dreamhomes-web -n 30 --no-pager; die "site did not start"; }
-journalctl -u dreamhomes-web --since "-2min" --no-pager | grep -q '\[cms\]' && warn "the site logged [cms] warnings — check: journalctl -u dreamhomes-web" || ok "site up on 127.0.0.1:4330, reading the CMS"
+journalctl -u dreamhomes-web --since "-2min" --no-pager | grep '\[cms\]' >/dev/null && warn "the site logged [cms] warnings — check: journalctl -u dreamhomes-web" || ok "site up on 127.0.0.1:4330, reading the CMS"
 resp=$(curl -fsS -X POST -H "x-revalidate-secret: $SECRET" http://127.0.0.1:4330/api/revalidate/ || true)
 [[ $resp == *'"ok":true'* ]] && ok "CMS → site revalidation works" || warn "revalidate check failed: $resp"
 
