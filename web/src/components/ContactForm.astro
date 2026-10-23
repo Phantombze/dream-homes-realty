@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { title, intro, topics, successMessage, listing } = Astro.props
-// Read per request (from /srv/deploy/turnstile.env via the service unit), so
+// Read per request (this site's own key, /srv/deploy/turnstile-dreamhomes.env via the service unit), so
 // setting or changing the key needs a restart, not a rebuild.
 const siteKey = process.env.PUBLIC_TURNSTILE_SITE_KEY || import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || ''
 const preset = listing ? `I'm interested in "${listing.title}" (${listing.url}). ` : ''

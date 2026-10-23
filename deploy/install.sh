@@ -162,9 +162,9 @@ systemctl restart site-contact
 sleep 1
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:8787/api/contact || true)
 [[ $code == 403 ]] && ok "contact service running, refuses unknown sites" || warn "contact service answered $code (expected 403)"
-grep -q '^BREVO_API_KEY=xkeysib-' /etc/site-contact/contact.env \
+grep -q '^BREVO_API_KEY_DREAMHOMES=xkeysib-' /etc/site-contact/contact.env \
   && ok "contact keys present" \
-  || warn "contact keys not set yet: sudo bash $SITE/deploy/set-contact-keys.sh"
+  || warn "Dream Homes contact keys not set yet: sudo bash $CMS/ops/contact-forms/set-keys.sh"
 
 # ---------------------------------------------------------------------------
 say "8. Point Caddy at it (replaces the holding page)"
@@ -180,6 +180,6 @@ cat <<'EOF'
    Edit:    https://cp.panelbz.cloud/admin  → Dream Homes
 
    Still to do once (see README → Deploying):
-   - contact form keys:  sudo bash /srv/src/dreamhomes/deploy/set-contact-keys.sh
+   - contact form keys (every site's own):  sudo bash /srv/src/cms/ops/contact-forms/set-keys.sh
    - create Dean's editor account in the CMS, tenant "Dream Homes Realty"
 EOF

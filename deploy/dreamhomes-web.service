@@ -15,9 +15,10 @@ WorkingDirectory=/srv/src/dreamhomes/web
 # PAYLOAD_API_URL, PAYLOAD_TENANT, REVALIDATE_SECRET, PUBLIC_SITE_URL.
 # 0640 root:dreamhomes, so `systemctl cat` never prints the secret.
 EnvironmentFile=/etc/dreamhomes/web.env
-# PUBLIC_TURNSTILE_SITE_KEY (public, shared with the other sites). Optional:
+# PUBLIC_TURNSTILE_SITE_KEY: this site's own Turnstile widget (public; it is
+# in the page). Written by set-keys.sh in the CMS repository. Optional:
 # without it the contact form shows no verification widget.
-EnvironmentFile=-/srv/deploy/turnstile.env
+EnvironmentFile=-/srv/deploy/turnstile-dreamhomes.env
 Environment=HOST=127.0.0.1
 Environment=PORT=4330
 Environment=NODE_ENV=production
