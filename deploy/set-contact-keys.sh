@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 #
-#   Sets the contact form's keys on the server. Asks for each one (typing is
-#   hidden), checks it looks right, writes it where only root can read it,
-#   and restarts what uses it.
+#   Sets the contact-form keys on the server, for every site at once:
+#   dreamhomes-realty.com, medinasmaterial.com and parkingsolutions.bz all use
+#   the one shared contact service, so one Brevo key and one Turnstile widget
+#   serve them all. Asks for each key (typing is hidden), checks it looks
+#   right, writes it where only root can read it, and restarts what uses it.
 #
 #   Run:  sudo bash /srv/src/dreamhomes/deploy/set-contact-keys.sh
 #
@@ -59,8 +61,9 @@ echo
 echo "Brevo: brevo.com → SMTP & API → API Keys → Generate (starts xkeysib-)"
 BREVO=$(ask "Brevo API key" '^xkeysib-[A-Za-z0-9-]{20,}$' 'it starts with xkeysib-' "$(current BREVO_API_KEY "$SECRETS")")
 echo
-echo "Turnstile: Cloudflare → Turnstile → the widget for dreamhomes-realty.com"
-echo "           (its hostnames must include dreamhomes-realty.com and www.dreamhomes-realty.com)"
+echo "Turnstile: Cloudflare → Turnstile → the widget used by the sites. Its hostnames"
+echo "           must include all three: dreamhomes-realty.com, medinasmaterial.com and"
+echo "           parkingsolutions.bz (the www. hosts are covered by the bare domain)."
 TS_SECRET=$(ask "Turnstile SECRET key" '^0x[A-Za-z0-9_-]{20,}$' 'it starts with 0x' "$(current TURNSTILE_SECRET_KEY "$SECRETS")")
 TS_SITE=$(ask "Turnstile SITE key  " '^0x[A-Za-z0-9_-]{10,}$' 'it starts with 0x' "$(current PUBLIC_TURNSTILE_SITE_KEY "$SITEKEY")")
 [[ $TS_SITE != "$TS_SECRET" ]] || { echo "The site key and the secret key are the same — one of them is wrong."; exit 1; }
@@ -74,25 +77,43 @@ echo
 echo "  saved: $SECRETS (root only), $SITEKEY"
 
 systemctl restart site-contact
-systemctl restart dreamhomes-web
 sleep 2
 systemctl is-active --quiet site-contact || { journalctl -u site-contact -n 20 --no-pager; exit 1; }
 
-# The widget is on the contact page, and the service answers for this site.
-curl -fsS http://127.0.0.1:4330/contact/ | grep -q 'data-sitekey="0x' \
-  && echo "  ok  contact page shows the Turnstile widget" \
-  || echo "  !!  contact page has no Turnstile widget — check $SITEKEY"
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://www.dreamhomes-realty.com' \
-  -H 'Content-Type: application/json' -d '{"name":"x"}' http://127.0.0.1:8787/api/contact)
-[[ $code == 400 ]] && echo "  ok  contact service accepts Dream Homes (empty test message refused, as it should be)" \
-  || echo "  !!  contact service answered $code (expected 400)"
+# The two rendered sites read the site key when they start; restart them so
+# their contact pages show the widget. Parking Solutions is static: its key
+# is built into the page, so it needs publishing again (see the end).
+check_site() {
+  local name=$1 unit=$2 port=$3 path=$4 origin=$5
+  if ! systemctl list-unit-files "$unit.service" --no-legend 2>/dev/null | grep -q .; then
+    echo "  --  $name: not installed here"
+    return
+  fi
+  systemctl restart "$unit"
+  for i in $(seq 1 20); do curl -fsS -o /dev/null "http://127.0.0.1:$port/" && break; sleep 1; done
+  curl -fsS "http://127.0.0.1:$port$path" | grep -q 'data-sitekey="0x' \
+    && echo "  ok  $name: contact page shows the Turnstile widget" \
+    || echo "  !!  $name: contact page has no Turnstile widget — check $SITEKEY"
+  code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "Origin: $origin" \
+    -H 'Content-Type: application/json' -d '{"name":"x"}' http://127.0.0.1:8787/api/contact)
+  [[ $code == 400 ]] && echo "  ok  $name: contact service accepts it (empty test message refused, as it should be)" \
+    || echo "  !!  $name: contact service answered $code (expected 400)"
+}
+check_site "Dream Homes" dreamhomes-web 4330 /contact/    https://www.dreamhomes-realty.com
+check_site "Medina's"    medinas-web    4331 /contact-us/ https://www.medinasmaterial.com
 
 cat <<'EOF'
 
-  Last step: send a real message from https://www.dreamhomes-realty.com/contact/
-  and watch it go out:   sudo journalctl -u site-contact -f
+  Parking Solutions: publish it again so its contact page is built with the
+  site key (its SERVER-GUIDE.md, section 3b).
 
-  Brevo must also allow the sender no-reply@dreamhomes-realty.com:
-  Brevo → Senders, Domains & Dedicated IPs → Domains → add dreamhomes-realty.com
-  and put the DNS records it shows into Cloudflare.
+  Then send a real message from each site's contact page and watch it go out:
+    sudo journalctl -u site-contact -f
+
+  Brevo must allow each site's sender, or it rejects the send:
+    no-reply@dreamhomes-realty.com, no-reply@medinasmaterial.com,
+    no-reply@parkingsolutions.bz
+  Brevo → Senders, Domains & Dedicated IPs → Domains → add each domain, and
+  put the DNS records it shows into Cloudflare.
+  Enquiries go to the inboxes listed per site in /opt/site-contact/sites.json.
 EOF
