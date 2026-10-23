@@ -46,6 +46,14 @@ year-long immutable caching so Cloudflare serves them after the first view.
 
 ## Deploying
 
+**Locked out of SSH?** SSH is allowed only from the operator's own IP
+addresses. If your home or work IP changes, log in from the other one and
+re-run `sudo bash /srv/src/server-ops/harden.sh`. If neither works, use
+DigitalOcean's **Recovery Console** (droplet → Access), which does not go
+through the firewall; the "Droplet Console" there uses SSH and is blocked
+like any other address. Details: github.com/Phantombze/belize-server-ops.
+
+
 On the server the site runs as `dreamhomes-web.service` (Node on `127.0.0.1:4330`, 220 MB cap) behind Caddy, which
 also serves `/_astro/*` straight from disk and routes `/api/contact` to the shared contact service. Everything is in
 `deploy/`:
